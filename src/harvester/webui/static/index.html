@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notanda — Control Center</title>
+<link rel="stylesheet" href="/styles.css">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="alternate icon" href="/favicon.ico" sizes="16x16">
+<link rel="apple-touch-icon" href="/notanda_avatar_180.png">
+</head>
+<body>
+<div class="app">
+  <header class="sidebar">
+    <div class="brand">
+      <img class="brand-lockup" src="/notanda_lockup_dunkel_pfade.svg" alt="Notanda — Independent evidence infrastructure for scientific research" width="360" height="132">
+      <div class="brand-sub">Control Center <span class="pill">Beta</span></div>
+    </div>
+
+    <nav id="nav" aria-label="Main navigation">
+      <a class="nav-item" href="#/dashboard">Dashboard</a>
+      <a class="nav-item" href="#/harvest">New Harvest</a>
+      <a class="nav-item" href="#/runs">Runs</a>
+      <a class="nav-item" href="#/corpus">Corpus</a>
+      <a class="nav-item" href="#/verify">Verify</a>
+      <a class="nav-item" href="#/failures">Retry Failed<span class="nav-badge" id="nav-failed" hidden></span></a>
+      <a class="nav-item" href="#/settings">Settings</a>
+    </nav>
+
+    <div id="sidebar-activity" class="mini-activity" hidden></div>
+  </header>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1 id="page-title">Dashboard</h1>
+        <p id="page-sub" class="page-sub"></p>
+      </div>
+      <div class="topbar-actions" id="topbar-actions"></div>
+    </header>
+    <div id="view" class="view"><div class="loading">Loading…</div></div>
+  </main>
+</div>
+
+<footer class="sidebar-foot">
+  <img class="footer-emblem" src="/notanda_emblem_farbig_dunkel.svg" width="60" height="60" alt="Notanda">
+  <div><p>Independent evidence infrastructure for scientific research</p>
+    <p class="technical-base">Technical basis: <span class="mono">oa_harvester<span id="technical-version"></span></span></p>
+    <div class="sidebar-meta" id="sidebar-meta"></div>
+  </div>
+</footer>
+
+<div id="panel" class="panel" hidden>
+  <div class="panel-backdrop" data-close-panel></div>
+  <section class="panel-body" role="dialog" aria-modal="true" aria-labelledby="panel-title" aria-describedby="panel-sub">
+    <header class="panel-head">
+      <div>
+        <h2 id="panel-title">Details</h2>
+        <p id="panel-sub" class="panel-sub"></p>
+      </div>
+      <button class="icon-btn" data-close-panel title="Close">Close</button>
+    </header>
+    <div id="panel-content" class="panel-content"></div>
+  </section>
+</div>
+
+<div id="toasts" class="toasts" aria-live="polite"></div>
+
+<script src="/app.js"></script>
+</body>
+</html>

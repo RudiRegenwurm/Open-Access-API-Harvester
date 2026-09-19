@@ -1,0 +1,20 @@
+# Byte-exact protection for the sealed Notanda emblem handoff package.
+#
+# The package ships manifest.json and SHA256SUMS covering every file with its
+# SHA-256 over the unmodified raw bytes. This repository runs with
+# core.autocrlf=true, which would rewrite LF to CRLF on checkout for the .md,
+# .svg, SHA256SUMS and manifest.json files inside the package and break both
+# `tools/handoff_manifest.py verify` and `sha256sum -c SHA256SUMS`.
+#
+# Scope is deliberately narrow: only the sealed package directory. Ordinary
+# brand documents outside it follow the usual repository rules.
+docs/brand/Notanda_Emblem_Final_V1.0_2026-09-11/** -text
+
+# The manifest test harness is a bash script. Under core.autocrlf=true a
+# Windows checkout would give it CRLF line endings, which Linux and WSL bash
+# reject. Keep it LF everywhere. Scoped to this one file on purpose.
+tools/run_handoff_manifest_tests.sh text eol=lf
+
+# The application copies of sealed artwork must also survive checkout byte-for-byte.
+src/harvester/webui/static/*.svg -text
+src/harvester/webui/static/*.woff2 -text

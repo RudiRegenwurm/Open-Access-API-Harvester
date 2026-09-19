@@ -39,8 +39,7 @@ harvester serve
 
 Opens a local web UI at <http://localhost:8765/> for harvesting, browsing the corpus,
 inspecting runs and provenance, verifying integrity, retrying failures and editing
-settings. Credentials can be entered in its Settings page on first run. See
-[`docs/webui.md`](docs/webui.md).
+settings. Credentials can be entered in its Settings page on first run.
 
 **New Harvest** offers two search modes. *Conventional Search* uses the query you type,
 exactly as typed. *Assisted Search* turns a plain-language research question into one

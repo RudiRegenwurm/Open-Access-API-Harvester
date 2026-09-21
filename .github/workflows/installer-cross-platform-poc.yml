@@ -41,16 +41,7 @@ jobs:
 
           rm -rf "$HOME/Notanda" /tmp/Notanda.app /tmp/notanda-mount.plist
           hdiutil attach -nobrowse -readonly -plist "$dmg" > /tmp/notanda-mount.plist
-          mount_point="$(python - <<'PY'
-import plistlib
-with open('/tmp/notanda-mount.plist', 'rb') as f:
-    data = plistlib.load(f)
-for entity in data.get('system-entities', []):
-    if 'mount-point' in entity:
-        print(entity['mount-point'])
-        break
-PY
-)"
+          mount_point="$(python -c "import plistlib; d=plistlib.load(open('/tmp/notanda-mount.plist','rb')); print(next(e['mount-point'] for e in d.get('system-entities', []) if 'mount-point' in e))")"
           test -n "$mount_point"
           cp -R "$mount_point/Notanda.app" /tmp/Notanda.app
           hdiutil detach "$mount_point"
@@ -75,17 +66,7 @@ PY
             sleep 1
           done
           test "$ready" -eq 1
-          python - <<'PY'
-import json
-from pathlib import Path
-data = json.load(open('/tmp/notanda-settings.json', encoding='utf-8'))
-entry = next(s for s in data['settings'] if s['key'] == 'openalex.api_key')
-assert entry['configured'] is False
-root = Path.home() / 'Notanda'
-assert (root / 'config' / 'harvester.json').is_file()
-for name in ('corpus', 'state', 'reports'):
-    assert (root / name).is_dir()
-PY
+          python -c "import json; from pathlib import Path; d=json.load(open('/tmp/notanda-settings.json', encoding='utf-8')); e=next(x for x in d['settings'] if x['key']=='openalex.api_key'); assert e['configured'] is False; r=Path.home()/'Notanda'; assert (r/'config'/'harvester.json').is_file(); assert all((r/n).is_dir() for n in ('corpus','state','reports'))"
           kill "$pid" || true
           wait "$pid" 2>/dev/null || true
           trap - EXIT
@@ -169,17 +150,7 @@ PY
             sleep 1
           done
           test "$ready" -eq 1
-          python - <<'PY'
-import json
-from pathlib import Path
-data = json.load(open('/tmp/notanda-settings.json', encoding='utf-8'))
-entry = next(s for s in data['settings'] if s['key'] == 'openalex.api_key')
-assert entry['configured'] is False
-root = Path.home() / 'Notanda'
-assert (root / 'config' / 'harvester.json').is_file()
-for name in ('corpus', 'state', 'reports'):
-    assert (root / name).is_dir()
-PY
+          python -c "import json; from pathlib import Path; d=json.load(open('/tmp/notanda-settings.json', encoding='utf-8')); e=next(x for x in d['settings'] if x['key']=='openalex.api_key'); assert e['configured'] is False; r=Path.home()/'Notanda'; assert (r/'config'/'harvester.json').is_file(); assert all((r/n).is_dir() for n in ('corpus','state','reports'))"
           kill "$pid" || true
           wait "$pid" 2>/dev/null || true
           trap - EXIT

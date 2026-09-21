@@ -1,7 +1,8 @@
 # ADR 0004 — Standalone desktop packaging and installer path
 
-- **Status:** Accepted
+- **Status:** Accepted; signing/notarization section superseded by ADR 0005
 - **Date:** 2026-09-21
+- **Superseded in part by:** [ADR 0005 — Zero-recurring-cost platform trust policy](0005-zero-recurring-cost-platform-trust.md)
 - **Scope:** Packaging, first-run startup, local writable paths, code signing/notarization
 - **Not in scope:** Brand/website work, MCP/API expansion, public beta release
 

@@ -149,6 +149,18 @@ missing full text, alternative locations and duplicates.
 | [`LICENSE`](LICENSE) | MIT license for the product code and documentation, subject to the stated exceptions |
 | [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) | bundled font licenses and separately licensed dependencies |
 | [`TRADEMARKS.md`](TRADEMARKS.md) | treatment of the Notanda name and visual identity assets |
+| [`CODE_SIGNING_POLICY.md`](CODE_SIGNING_POLICY.md) | Windows code signing policy and SignPath Foundation requirements |
+| [`INSTALL-MACOS.md`](INSTALL-MACOS.md) | macOS standalone-app installation and Gatekeeper exception procedure |
+
+## Code signing policy
+
+Windows release signing is intended to use the free Open Source service from SignPath Foundation.
+**Free code signing provided by SignPath.io, certificate by SignPath Foundation.**
+The complete policy, including maintainer roles, manual approval, build provenance, privacy and
+uninstallation commitments, is documented in [`CODE_SIGNING_POLICY.md`](CODE_SIGNING_POLICY.md).
+
+The SignPath Foundation application is not represented here as accepted or active. The repository
+still intentionally offers source only and no public installer/release artifact.
 
 ## Dependencies
 

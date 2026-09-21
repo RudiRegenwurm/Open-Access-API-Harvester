@@ -1,6 +1,6 @@
 # Notanda on macOS — standalone app installation
 
-**Status:** internal/beta installation path  
+**Status:** public technical Installer Preview; not recommended for non-technical users  
 **Signing:** ad-hoc only; not Apple Developer ID signed and not notarized  
 **Terminal required:** no
 

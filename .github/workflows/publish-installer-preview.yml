@@ -1,0 +1,86 @@
+name: Publish installer preview
+
+on:
+  push:
+    branches:
+      - feature/standalone-installer-v1-20260921
+    paths:
+      - .github/workflows/publish-installer-preview.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: v1.3.0-installer-preview.1
+      TARGET_SHA: 2039d9e8e73f0b83ca6e78d3902035de8133bf50
+    steps:
+      - name: Check out publication metadata
+        uses: actions/checkout@v4
+
+      - name: Download exact validated installer artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf staging release-assets
+          mkdir -p staging/windows staging/macos staging/linux release-assets
+
+          gh run download 35586617355 --repo "$GITHUB_REPOSITORY" \
+            -n notanda-windows-msi-unsigned -D staging/windows
+          gh run download 35586617462 --repo "$GITHUB_REPOSITORY" \
+            -n notanda-macos-dmg-adhoc -D staging/macos
+          gh run download 35586617462 --repo "$GITHUB_REPOSITORY" \
+            -n notanda-linux-deb-unsigned -D staging/linux
+
+          cp staging/windows/dist/Notanda-1.3.0.msi release-assets/
+          cp staging/macos/dist/Notanda-1.3.0.dmg release-assets/
+          cp staging/linux/dist/harvester_1.3.0-1~ubuntu-noble_amd64.deb release-assets/
+
+      - name: Verify exact installer hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "119ad7aadad955be20fe70903c29ebd774c6d1470e7a793746a3dd5d2ebe60ef  release-assets/Notanda-1.3.0.msi" | sha256sum -c -
+          echo "928cbe2c1a031c00f5033cd75130d458f3a6c5a6122b5bd126ea549284fa2210  release-assets/Notanda-1.3.0.dmg" | sha256sum -c -
+          echo "37e300384a9ac7949391023b9a4f2509dbe1068e1e8d6e06d9faf180df84d52c  release-assets/harvester_1.3.0-1~ubuntu-noble_amd64.deb" | sha256sum -c -
+
+          (
+            cd release-assets
+            sha256sum \
+              Notanda-1.3.0.msi \
+              Notanda-1.3.0.dmg \
+              harvester_1.3.0-1~ubuntu-noble_amd64.deb \
+              > SHA256SUMS.txt
+          )
+          cat release-assets/SHA256SUMS.txt
+
+      - name: Publish GitHub pre-release
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; refusing to overwrite it." >&2
+            exit 1
+          fi
+
+          gh release create "$TAG" \
+            release-assets/Notanda-1.3.0.msi \
+            release-assets/Notanda-1.3.0.dmg \
+            release-assets/harvester_1.3.0-1~ubuntu-noble_amd64.deb \
+            release-assets/SHA256SUMS.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$TARGET_SHA" \
+            --title "Notanda 1.3.0 — Installer Preview 1 (unsigned technical preview)" \
+            --notes-file docs/releases/v1.3.0-installer-preview.1.md \
+            --prerelease
+
+      - name: Verify published release
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" \
+            --json url,tagName,name,isPrerelease,assets

@@ -70,6 +70,9 @@ The current package/install/uninstall validation remains the technical baseline.
 
 ## SignPath eligibility gate
 
+> **Update:** This gate is superseded by ADR 0006, which explicitly authorizes a public unsigned
+> Installer Preview for the sole purpose of satisfying the published release condition.
+
 SignPath Foundation's published conditions currently state that a qualifying Open Source project
 must already be **released in the form that should be signed** and that functionality must be
 documented on its download page/app-store entry.

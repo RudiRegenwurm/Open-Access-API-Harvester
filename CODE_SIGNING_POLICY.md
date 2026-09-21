@@ -108,6 +108,8 @@ Project contact: `beta@notanda.io`
 
 ## Status
 
-As of 2026-09-21, this policy is prepared for a SignPath Foundation application. The project's
-current Windows MSI remains unsigned and internal-only. No SignPath Foundation certificate or
-subscription is claimed until SignPath confirms acceptance.
+As of 2026-09-21, this policy is prepared for a SignPath Foundation application. A public,
+unsigned Installer Preview is authorized to satisfy the Foundation's "released in the form that
+should be signed" condition. The preview is not recommended for non-technical users and is not a
+SignPath-signed release. No SignPath Foundation certificate or subscription is claimed until
+SignPath confirms acceptance.

@@ -46,6 +46,7 @@ jobs:
           cp -R "$mount_point/Notanda.app" /tmp/Notanda.app
           hdiutil detach "$mount_point"
 
+          python_bin="$(command -v python)"
           old_path="$PATH"
           export PATH="/usr/bin:/bin"
           /tmp/Notanda.app/Contents/MacOS/Notanda >/tmp/notanda-macos.log 2>&1 &
@@ -66,7 +67,7 @@ jobs:
             sleep 1
           done
           test "$ready" -eq 1
-          python -c "import json; from pathlib import Path; d=json.load(open('/tmp/notanda-settings.json', encoding='utf-8')); e=next(x for x in d['settings'] if x['key']=='openalex.api_key'); assert e['configured'] is False; r=Path.home()/'Notanda'; assert (r/'config'/'harvester.json').is_file(); assert all((r/n).is_dir() for n in ('corpus','state','reports'))"
+          "$python_bin" -c "import json; from pathlib import Path; d=json.load(open('/tmp/notanda-settings.json', encoding='utf-8')); e=next(x for x in d['settings'] if x['key']=='openalex.api_key'); assert e['configured'] is False; r=Path.home()/'Notanda'; assert (r/'config'/'harvester.json').is_file(); assert all((r/n).is_dir() for n in ('corpus','state','reports'))"
           kill "$pid" || true
           wait "$pid" 2>/dev/null || true
           trap - EXIT
@@ -126,6 +127,7 @@ jobs:
             exit 1
           fi
 
+          python_bin="$PWD/.briefcase-venv/bin/python"
           old_path="$PATH"
           export PATH="/usr/bin:/bin"
           "$exe" >/tmp/notanda-linux.log 2>&1 &
@@ -146,7 +148,7 @@ jobs:
             sleep 1
           done
           test "$ready" -eq 1
-          python -c "import json; from pathlib import Path; d=json.load(open('/tmp/notanda-settings.json', encoding='utf-8')); e=next(x for x in d['settings'] if x['key']=='openalex.api_key'); assert e['configured'] is False; r=Path.home()/'Notanda'; assert (r/'config'/'harvester.json').is_file(); assert all((r/n).is_dir() for n in ('corpus','state','reports'))"
+          "$python_bin" -c "import json; from pathlib import Path; d=json.load(open('/tmp/notanda-settings.json', encoding='utf-8')); e=next(x for x in d['settings'] if x['key']=='openalex.api_key'); assert e['configured'] is False; r=Path.home()/'Notanda'; assert (r/'config'/'harvester.json').is_file(); assert all((r/n).is_dir() for n in ('corpus','state','reports'))"
           kill "$pid" || true
           wait "$pid" 2>/dev/null || true
           trap - EXIT

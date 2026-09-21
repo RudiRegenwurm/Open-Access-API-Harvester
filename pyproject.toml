@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0", "pytest-cov>=5.0"]
+dev = ["pytest>=8.0", "pytest-cov>=5.0"]\npackaging = ["briefcase==0.4.5"]
 
 [project.scripts]
 harvester = "harvester.cli:main"
@@ -41,3 +41,21 @@ markers = [
 ]
 addopts = "-m 'not live'"
 filterwarnings = ["error::DeprecationWarning:harvester.*"]
+
+
+[tool.briefcase]
+project_name = "Notanda"
+bundle = "io.notanda"
+author = "Rudolf Kiechle"
+url = "https://notanda.io"
+license = "MIT"
+license_files = ["LICENSE"]
+
+[tool.briefcase.app.harvester]
+formal_name = "Notanda"
+description = "Local, provenance-aware tool for collecting and verifying open-access scientific literature."
+sources = ["src/harvester"]
+console_app = false
+
+[tool.briefcase.app.harvester.windows]
+create_desktop_shortcut = true

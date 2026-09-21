@@ -2268,8 +2268,24 @@ async function loadSidebarMeta() {
  * must NOT jump the operator back to the top. Scrolling to the top belongs to the
  * navigation event itself, not to render(), which both kinds of refresh share. */
 window.addEventListener('hashchange', () => { window.scrollTo(0, 0); render(); });
+async function renderInitialRoute() {
+  // A packaged first launch must lead to setup, not to a blocked dashboard. Reuse
+  // the existing secret-safe settings endpoint; no credential value is returned.
+  if (!location.hash || location.hash === '#/dashboard') {
+    try {
+      const data = await api('/api/settings');
+      const openalex = data.settings.find((s) => s.key === 'openalex.api_key');
+      if (openalex && !openalex.configured) {
+        location.hash = '#/settings';
+        return;
+      }
+    } catch (_) { /* render() below will surface API failures on the page. */ }
+  }
+  await render();
+}
+
 window.addEventListener('DOMContentLoaded', () => {
-  render();
+  guard(renderInitialRoute, 'Could not initialize');
   startPolling();
   loadSidebarMeta();
   setInterval(loadSidebarMeta, 15000);

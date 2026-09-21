@@ -52,6 +52,7 @@ license_files = ["LICENSE"]
 [tool.briefcase.app.harvester]
 formal_name = "Notanda"
 description = "Local provenance-aware open-access scientific evidence tool."
+long_description = """Notanda is a local application for collecting, verifying, and preserving open-access scientific literature with provider provenance and file-integrity checks. The user keeps the corpus and state on their own computer."""
 sources = ["src/harvester"]
 console_app = false
 

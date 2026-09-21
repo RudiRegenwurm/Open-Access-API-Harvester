@@ -4,9 +4,13 @@
 package and CLI keep their established technical names
 `Open-Access-API-Harvester`, `oa-harvester`, `harvester` and `harvester`.
 
-This repository publishes the reviewed 1.3.0 product-core source. It is a source
-publication, not a public beta, hosted service, signed build or production
-release. No installer or downloadable release artifact is offered here.
+This repository publishes the reviewed 1.3.0 product-core source. It is not a hosted
+service and the recommended accompanied beta path remains `beta@notanda.io`.
+
+A public **Installer Preview** may be available under GitHub Releases solely as a
+technical pre-release. Those installers are unsigned on Windows/Linux and ad-hoc signed
+on macOS, may trigger SmartScreen/Gatekeeper warnings, and are **not the recommended
+installation path for non-technical users**.
 
 A headless, resumable, idempotent CLI pipeline that discovers Open-Access scholarly
 works through **OpenAlex Topics**, cross-checks them against **Europe PMC**, falls back
@@ -149,6 +153,18 @@ missing full text, alternative locations and duplicates.
 | [`LICENSE`](LICENSE) | MIT license for the product code and documentation, subject to the stated exceptions |
 | [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) | bundled font licenses and separately licensed dependencies |
 | [`TRADEMARKS.md`](TRADEMARKS.md) | treatment of the Notanda name and visual identity assets |
+| [`CODE_SIGNING_POLICY.md`](CODE_SIGNING_POLICY.md) | Windows code signing policy for the SignPath Foundation application |
+| [`INSTALL-MACOS.md`](INSTALL-MACOS.md) | macOS Installer Preview and Gatekeeper exception procedure |
+
+## Code signing policy
+
+**Free code signing provided by SignPath.io, certificate by SignPath Foundation.**
+
+Windows release signing is intended to use SignPath Foundation's free Open Source path.
+Every production signing request requires explicit manual approval by the maintainer.
+The complete policy is documented in [`CODE_SIGNING_POLICY.md`](CODE_SIGNING_POLICY.md).
+No current unsigned Installer Preview should be interpreted as already signed or approved
+by SignPath Foundation.
 
 ## Dependencies
 

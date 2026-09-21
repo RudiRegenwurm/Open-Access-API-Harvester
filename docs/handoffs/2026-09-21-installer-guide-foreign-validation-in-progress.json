@@ -2,7 +2,7 @@
   "manifest_version": "1.0",
   "created_utc": "2026-09-21T12:44:00Z",
   "task": "Empirical foreign-machine validation for unsigned Windows and ad-hoc macOS installer guides",
-  "status": "EXTERNAL_GUI_VALIDATION_IN_PROGRESS_TEST_POOL_EXPANDED",
+  "status": "EXTERNAL_GUI_VALIDATION_PREPARED_CONTACT_HOLD",
   "repository": "RudiRegenwurm/Open-Access-API-Harvester",
   "branch": "docs/installer-guides-foreign-test-20260921",
   "base_main_commit": "433af04bcfa030dc2c4c699ff1e184081ae3a03c",
@@ -46,7 +46,9 @@
     "INSTALL-WINDOWS.de.md",
     "INSTALL-WINDOWS.en.md",
     "INSTALL-MACOS.de.md",
-    "INSTALL-MACOS.en.md"
+    "INSTALL-MACOS.en.md",
+    "docs/install/INVITE-WINDOWS-TEMPLATE.de.md",
+    "docs/install/INVITE-MACOS-TEMPLATE.de.md"
   ],
   "guide_status": {
     "windows": "Functionally complete except exact SmartScreen text and installer GUI button sequence, which remain explicitly marked as empirical validation points.",
@@ -75,8 +77,8 @@
       "security_rule": "No security feature may be disabled; stop if normal Run anyway/Trotzdem ausführen path is unavailable."
     },
     "macos": {
-      "status": "READY_BUT_NOT_SENT",
-      "reason": "No verified contact channel for the previous macOS tester is available in the connected project context.",
+      "status": "READY_CONTACT_HOLD",
+      "reason": "Protocol is prepared, but no contact is to be initiated until Rudolf explicitly releases contact.",
       "protocol": "docs/install/TEST-MACOS-ADHOC-20260921.md",
       "required_path": "System Settings -> Privacy & Security -> Security -> Open Anyway -> Open",
       "security_rule": "Do not disable Gatekeeper and do not use Terminal bypass commands."
@@ -84,7 +86,7 @@
     "additional_invited_test_pool": {
       "maximum_people": 4,
       "profile": "two former engineering colleagues and two physicists; technically experienced",
-      "status": "WAITING_FOR_CONTACT_AND_PLATFORM_ASSIGNMENT",
+      "status": "PREPARED_CONTACT_HOLD",
       "protocol_rule": "Use the same Windows or macOS protocol as Daniel/Alex according to each person's platform.",
       "evidence_required": [
         "security-warning state photographed before every click",
@@ -101,7 +103,8 @@
         "do not forward or recruit uninvolved third parties",
         "Windows: do not disable Windows Security/SmartScreen/Smart App Control/antivirus/firewall",
         "macOS: no xattr, no spctl, no disabling Gatekeeper; use System Settings -> Privacy & Security -> Open Anyway -> Open"
-      ]
+      ],
+      "contact_rule": "No invitation or follow-up is sent until Rudolf provides contact/platform information and explicitly authorizes contact."
     }
   },
   "official_platform_reference_only_not_empirical_evidence": {
@@ -128,13 +131,24 @@
     "no_mcp_work": true,
     "no_main_merge_yet": true,
     "no_uninvited_third_party_distribution": true,
-    "test_mails_must_label_technical_preview": true
+    "test_mails_must_label_technical_preview": true,
+    "no_new_tester_contact_until_explicit_release": true
   },
-  "updated_utc": "2026-09-21T13:08:00Z",
+  "updated_utc": "2026-09-21T13:13:00Z",
   "policy_update": {
     "date": "2026-09-21",
     "decision": "The previous plan to wait for a simpler/signed build before involving four former engineering/physics colleagues is withdrawn.",
     "rationale": "The current Installer Preview is explicitly a technical pre-release and is appropriate for technically experienced invited testers.",
     "effect": "Up to four additional testers may use the current public Installer Preview as soon as Rudolf supplies verified contact details and the platform for each person."
+  },
+  "contact_hold": {
+    "effective_from": "2026-09-21T13:12:27Z",
+    "instruction": "Do not contact any additional tester. Prepare materials only until Rudolf explicitly releases contact.",
+    "applies_to": [
+      "Alex macOS follow-up",
+      "up to four additional former engineering/physics colleagues",
+      "any other new installer-preview tester"
+    ],
+    "note": "Daniel had already been contacted before this hold instruction; no further follow-up is to be sent unless Rudolf explicitly requests it."
   }
 }

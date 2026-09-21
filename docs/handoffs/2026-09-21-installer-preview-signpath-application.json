@@ -1,0 +1,104 @@
+{
+  "manifest_version": "1.0",
+  "created_utc": "2026-09-21T11:05:00Z",
+  "task": "Publish unsigned installer preview and submit SignPath Foundation application",
+  "status": "RELEASE_PUBLISHED_APPLICATION_FORM_BLOCKED_BY_CAPTCHA",
+  "repository": "RudiRegenwurm/Open-Access-API-Harvester",
+  "branch": "feature/standalone-installer-v1-20260921",
+  "adr": {
+    "path": "docs/adr/0006-public-unsigned-installer-preview.md",
+    "decision_commit": "6829ce8e7624e8bc63a3e9a7af957007c354eeeb"
+  },
+  "public_repository_docs": {
+    "main_commit": "433af04bcfa030dc2c4c699ff1e184081ae3a03c",
+    "code_signing_policy": "https://github.com/RudiRegenwurm/Open-Access-API-Harvester/blob/main/CODE_SIGNING_POLICY.md",
+    "macos_install_guide": "https://github.com/RudiRegenwurm/Open-Access-API-Harvester/blob/main/INSTALL-MACOS.md"
+  },
+  "release": {
+    "release_id": 392883857,
+    "tag": "v1.3.0-installer-preview.1",
+    "title": "Notanda 1.3.0 — Installer Preview 1 (unsigned technical preview)",
+    "url": "https://github.com/RudiRegenwurm/Open-Access-API-Harvester/releases/tag/v1.3.0-installer-preview.1",
+    "prerelease": true,
+    "published_at": "2026-09-21T10:52:54Z",
+    "target_commit": "2039d9e8e73f0b83ca6e78d3902035de8133bf50",
+    "publication_workflow_run": 35591058562,
+    "publication_workflow_job": 106305314416,
+    "notes_verified": {
+      "unsigned_or_adhoc_warning": true,
+      "nontechnical_user_warning": true,
+      "windows_smartscreen_warning": true,
+      "macos_gatekeeper_warning": true,
+      "beta_contact_only": "beta@notanda.io",
+      "not_promoted_to_existing_or_prospective_testers": true,
+      "signpath_credit_present": true
+    },
+    "assets": [
+      {
+        "name": "Notanda-1.3.0.msi",
+        "signing": "unsigned",
+        "sha256": "119ad7aadad955be20fe70903c29ebd774c6d1470e7a793746a3dd5d2ebe60ef",
+        "github_asset_id": 578846786
+      },
+      {
+        "name": "Notanda-1.3.0.dmg",
+        "signing": "ad-hoc only; not Developer ID signed or notarized",
+        "sha256": "928cbe2c1a031c00f5033cd75130d458f3a6c5a6122b5bd126ea549284fa2210",
+        "github_asset_id": 578846789
+      },
+      {
+        "name": "harvester_1.3.0-1.ubuntu-noble_amd64.deb",
+        "source_artifact_name": "harvester_1.3.0-1~ubuntu-noble_amd64.deb",
+        "signing": "unsigned",
+        "sha256": "37e300384a9ac7949391023b9a4f2509dbe1068e1e8d6e06d9faf180df84d52c",
+        "github_asset_id": 578846788
+      },
+      {
+        "name": "SHA256SUMS.txt",
+        "sha256": "32ced6a559927d01b1ea506f81885aee4b6a137780a10003418d2e3e5ba6a5ad",
+        "github_asset_id": 578846787
+      }
+    ]
+  },
+  "signpath_application": {
+    "application_page": "https://signpath.org/apply.html",
+    "regular_form_attempted": true,
+    "submitted_successfully": false,
+    "blocker": "HubSpot/Google reCAPTCHA rejected the automated browser submission with 'Failed to validate Captcha. Please try again.'",
+    "submission_attempt_workflow_run": 35591926176,
+    "submission_attempt_workflow_job": 106308018756,
+    "evidence_artifact_id": 10634753361,
+    "form_values_verified_before_submit": {
+      "project_name": "Notanda",
+      "repository_url": "https://github.com/RudiRegenwurm/Open-Access-API-Harvester",
+      "homepage_url": "https://notanda.io",
+      "download_url": "https://github.com/RudiRegenwurm/Open-Access-API-Harvester/releases/tag/v1.3.0-installer-preview.1",
+      "privacy_policy_url": "https://notanda.io/privacy.html",
+      "maintainer_type": "Individual maintainer(s)",
+      "build_system": "GitHub Actions",
+      "account_email": "beta@notanda.io",
+      "discovery_channel": "AI / LLM tools",
+      "discovery_source": "ChatGPT project work on Notanda installer signing",
+      "marketing_consent": false
+    },
+    "required_form_consents_selected_in_attempt": true,
+    "note": "No successful form submission is claimed. CAPTCHA was not bypassed.",
+    "fallback_contact": {
+      "support_email_sent": true,
+      "recipient": "support@signpath.io",
+      "gmail_message_id": "1a0c3a3a9b1b5791",
+      "subject": "Notanda SignPath Foundation application — public installer now released",
+      "purpose": "Provide full application data and ask SignPath to accept it directly or confirm manual browser completion."
+    }
+  },
+  "scope_boundaries": {
+    "release_not_promoted_to_daniel_alex_or_possible_new_testers": true,
+    "beta_recruiting_channel_unchanged": "beta@notanda.io",
+    "no_mcp_work": true,
+    "installer_implementation_not_merged_to_main": true
+  },
+  "next_action": {
+    "condition": "SignPath support accepts emailed data OR Rudolf completes the official form CAPTCHA in a normal browser.",
+    "then": "Record actual application-submission/acceptance identifier and proceed with SignPath onboarding/signing integration."
+  }
+}

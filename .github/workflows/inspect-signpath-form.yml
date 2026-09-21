@@ -23,13 +23,7 @@ jobs:
             -H 'Referer: https://signpath.org/apply.html' \
             'https://forms-eu1.hsforms.com/embed/v3/form/145110231/bf62807d-bb72-4e45-9bde-1f3a53ba2472/json' \
             -o signpath-form.json
-          python - <<'PY'
-import json
-from pathlib import Path
-p=Path('signpath-form.json')
-data=json.loads(p.read_text(encoding='utf-8'))
-print(json.dumps(data, indent=2, ensure_ascii=False))
-PY
+          python -c "import json, pathlib; p=pathlib.Path('signpath-form.json'); print(json.dumps(json.loads(p.read_text(encoding='utf-8')), indent=2, ensure_ascii=False))"
 
       - name: Upload form definition
         uses: actions/upload-artifact@v4

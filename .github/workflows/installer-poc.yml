@@ -47,6 +47,71 @@ jobs:
           "$hash  $($msi.Name)" | Set-Content -Encoding ascii installer-sha256.txt
           Get-Content installer-sha256.txt
 
+      - name: Install and launch MSI without Python on PATH
+        shell: pwsh
+        run: |
+          $msi = Get-ChildItem -Path dist -Filter *.msi -Recurse | Select-Object -First 1
+          if (-not $msi) { throw "No MSI produced under dist/" }
+
+          $dataRoot = Join-Path $env:USERPROFILE "Notanda"
+          Remove-Item -Path $dataRoot -Recurse -Force -ErrorAction SilentlyContinue
+
+          $install = Start-Process msiexec.exe -ArgumentList @("/i", $msi.FullName, "/qn", "/norestart") -Wait -PassThru
+          if ($install.ExitCode -ne 0) { throw "MSI install failed with exit code $($install.ExitCode)" }
+
+          $searchRoots = @(
+            (Join-Path $env:LOCALAPPDATA "Programs"),
+            $env:ProgramFiles,
+            ${env:ProgramFiles(x86)}
+          ) | Where-Object { $_ -and (Test-Path $_) }
+
+          $exe = $searchRoots |
+            ForEach-Object { Get-ChildItem -Path $_ -Filter "Notanda.exe" -File -Recurse -ErrorAction SilentlyContinue } |
+            Select-Object -First 1
+          if (-not $exe) { throw "Installed Notanda.exe was not found" }
+
+          # Prove startup does not rely on a separately installed Python being on PATH.
+          $oldPath = $env:PATH
+          $env:PATH = "$env:WINDIR\System32;$env:WINDIR"
+          try {
+            $process = Start-Process -FilePath $exe.FullName -PassThru
+            $ready = $false
+            for ($attempt = 0; $attempt -lt 30; $attempt++) {
+              Start-Sleep -Seconds 1
+              try {
+                $response = Invoke-RestMethod -Uri "http://127.0.0.1:8765/api/settings" -TimeoutSec 2
+                $ready = $true
+                break
+              } catch {
+                if ($process.HasExited) {
+                  throw "Notanda exited before the local control center became ready (exit $($process.ExitCode))"
+                }
+              }
+            }
+            if (-not $ready) { throw "Notanda control center did not become ready within 30 seconds" }
+
+            $openAlex = $response.settings | Where-Object { $_.key -eq "openalex.api_key" } | Select-Object -First 1
+            if (-not $openAlex) { throw "OpenAlex setting not exposed by first-run settings API" }
+            if ($openAlex.configured) { throw "Clean first-run unexpectedly reports an OpenAlex key" }
+
+            $config = Join-Path $dataRoot "config\harvester.json"
+            if (-not (Test-Path $config)) { throw "Desktop launcher did not create $config" }
+            foreach ($name in @("corpus", "state", "reports")) {
+              if (-not (Test-Path (Join-Path $dataRoot $name))) {
+                throw "Desktop launcher did not create user data directory: $name"
+              }
+            }
+          } finally {
+            $env:PATH = $oldPath
+            if ($process -and -not $process.HasExited) {
+              Stop-Process -Id $process.Id -Force
+            }
+          }
+
+          $uninstall = Start-Process msiexec.exe -ArgumentList @("/x", $msi.FullName, "/qn", "/norestart") -Wait -PassThru
+          if ($uninstall.ExitCode -ne 0) { throw "MSI uninstall failed with exit code $($uninstall.ExitCode)" }
+          if (-not (Test-Path $dataRoot)) { throw "Uninstall removed the user's Notanda data root" }
+
       - name: Upload internal installer artifact
         uses: actions/upload-artifact@v4
         with:

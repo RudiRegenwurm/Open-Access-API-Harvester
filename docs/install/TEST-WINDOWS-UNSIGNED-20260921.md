@@ -1,6 +1,8 @@
 # Notanda Installer Preview — Windows foreign-machine warning test
 
 **Status:** ready for external execution  
+**Audience:** Daniel plus up to four additional technically experienced invited testers, if assigned to Windows  
+**Distribution:** technical preview only; do not forward to uninvolved third parties  
 **Date:** 2026-09-21  
 **Artifact:** `Notanda-1.3.0.msi`  
 **SHA-256:** `119ad7aadad955be20fe70903c29ebd774c6d1470e7a793746a3dd5d2ebe60ef`  
@@ -10,8 +12,13 @@
 
 This test records the real first-run experience of the current **unsigned** Windows installer on
 a computer that is not a Notanda development machine. The goal is not merely to prove that the
-installer works; it is to capture the exact security-warning text and click sequence a
-non-technical user sees.
+installer works; it is to capture the exact security-warning text and click sequence a normal
+Windows user sees. The current invited test group may be technically experienced; the protocol
+must still follow the ordinary user-visible path without security-policy changes or terminal
+workarounds.
+
+The release and every test invitation must state that this is a **technical preview, not the
+recommended path for non-technical users**.
 
 Do not change Windows security settings for this test. In particular, do not disable SmartScreen,
 reputation-based protection, Smart App Control, antivirus, or the firewall.

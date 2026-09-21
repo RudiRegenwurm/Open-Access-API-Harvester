@@ -2,7 +2,7 @@
   "manifest_version": "1.0",
   "created_utc": "2026-09-21T12:44:00Z",
   "task": "Empirical foreign-machine validation for unsigned Windows and ad-hoc macOS installer guides",
-  "status": "EXTERNAL_GUI_VALIDATION_IN_PROGRESS",
+  "status": "EXTERNAL_GUI_VALIDATION_IN_PROGRESS_TEST_POOL_EXPANDED",
   "repository": "RudiRegenwurm/Open-Access-API-Harvester",
   "branch": "docs/installer-guides-foreign-test-20260921",
   "base_main_commit": "433af04bcfa030dc2c4c699ff1e184081ae3a03c",
@@ -80,6 +80,28 @@
       "protocol": "docs/install/TEST-MACOS-ADHOC-20260921.md",
       "required_path": "System Settings -> Privacy & Security -> Security -> Open Anyway -> Open",
       "security_rule": "Do not disable Gatekeeper and do not use Terminal bypass commands."
+    },
+    "additional_invited_test_pool": {
+      "maximum_people": 4,
+      "profile": "two former engineering colleagues and two physicists; technically experienced",
+      "status": "WAITING_FOR_CONTACT_AND_PLATFORM_ASSIGNMENT",
+      "protocol_rule": "Use the same Windows or macOS protocol as Daniel/Alex according to each person's platform.",
+      "evidence_required": [
+        "security-warning state photographed before every click",
+        "exact warning wording and every visible button label",
+        "installer dialogs in sequence",
+        "application start and local control-center result",
+        "first-run configuration result",
+        "uninstall/removal result",
+        "any point where assistance was needed"
+      ],
+      "invitation_requirements": [
+        "state clearly that the build is a technical preview and not the recommended path for non-technical users",
+        "send only to explicitly invited testers whose contact details Rudolf provides",
+        "do not forward or recruit uninvolved third parties",
+        "Windows: do not disable Windows Security/SmartScreen/Smart App Control/antivirus/firewall",
+        "macOS: no xattr, no spctl, no disabling Gatekeeper; use System Settings -> Privacy & Security -> Open Anyway -> Open"
+      ]
     }
   },
   "official_platform_reference_only_not_empirical_evidence": {
@@ -94,15 +116,25 @@
     ]
   },
   "completion_gate": [
-    "One real Windows foreign-machine run returns exact warning wording and GUI click sequence.",
-    "One real macOS foreign-machine run returns exact Gatekeeper wording and GUI click sequence through Open Anyway.",
-    "German and English guides are updated with those observations and reviewed for no-terminal usability.",
+    "At least one real Windows foreign-machine run returns exact warning wording and GUI click sequence.",
+    "At least one real macOS foreign-machine run returns exact Gatekeeper wording and GUI click sequence through Open Anyway.",
+    "Additional technically experienced invited testers may provide replication/variant evidence on either platform; disagreements are preserved rather than normalized away.",
+    "German and English guides are updated with the observed platform-specific wording and reviewed for no-terminal usability.",
     "Only then may the guides be marked empirically verified/final for the current unsigned/ad-hoc release."
   ],
   "scope_boundaries": {
     "no_signpath_dependency_for_this_work": true,
     "no_brand_or_landing_page_changes": true,
     "no_mcp_work": true,
-    "no_main_merge_yet": true
+    "no_main_merge_yet": true,
+    "no_uninvited_third_party_distribution": true,
+    "test_mails_must_label_technical_preview": true
+  },
+  "updated_utc": "2026-09-21T13:08:00Z",
+  "policy_update": {
+    "date": "2026-09-21",
+    "decision": "The previous plan to wait for a simpler/signed build before involving four former engineering/physics colleagues is withdrawn.",
+    "rationale": "The current Installer Preview is explicitly a technical pre-release and is appropriate for technically experienced invited testers.",
+    "effect": "Up to four additional testers may use the current public Installer Preview as soon as Rudolf supplies verified contact details and the platform for each person."
   }
 }

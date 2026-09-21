@@ -1,6 +1,8 @@
 # Notanda Installer Preview — macOS foreign-machine Gatekeeper test
 
 **Status:** ready for external execution  
+**Audience:** Alex plus up to four additional technically experienced invited testers, if assigned to macOS  
+**Distribution:** technical preview only; do not forward to uninvolved third parties  
 **Date:** 2026-09-21  
 **Artifact:** `Notanda-1.3.0.dmg`  
 **SHA-256:** `928cbe2c1a031c00f5033cd75130d458f3a6c5a6122b5bd126ea549284fa2210`  
@@ -11,7 +13,12 @@
 
 This test records the real Gatekeeper first-run experience of the current ad-hoc-signed Notanda
 application on a Mac that is not a Notanda development machine. The exact alert wording must come
-from the tested Mac, not from memory or a generic Apple screenshot.
+from the tested Mac, not from memory or a generic Apple screenshot. The current invited test group
+may be technically experienced; the protocol still uses only the normal Finder/System Settings
+path and never a Terminal-based bypass.
+
+The release and every test invitation must state that this is a **technical preview, not the
+recommended path for non-technical users**.
 
 Do not disable Gatekeeper and do not use Terminal commands such as `xattr`, `spctl`, or
 `sudo` to bypass the warning.

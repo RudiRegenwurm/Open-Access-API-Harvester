@@ -1,0 +1,108 @@
+{
+  "manifest_version": "1.0",
+  "created_utc": "2026-09-21T12:44:00Z",
+  "task": "Empirical foreign-machine validation for unsigned Windows and ad-hoc macOS installer guides",
+  "status": "EXTERNAL_GUI_VALIDATION_IN_PROGRESS",
+  "repository": "RudiRegenwurm/Open-Access-API-Harvester",
+  "branch": "docs/installer-guides-foreign-test-20260921",
+  "base_main_commit": "433af04bcfa030dc2c4c699ff1e184081ae3a03c",
+  "preparation_commit": "a0db9bb94d63857ffbb886c07b8db88bf8605bf2",
+  "release": {
+    "url": "https://github.com/RudiRegenwurm/Open-Access-API-Harvester/releases/tag/v1.3.0-installer-preview.1",
+    "tag": "v1.3.0-installer-preview.1",
+    "windows": {
+      "artifact": "Notanda-1.3.0.msi",
+      "signing": "unsigned",
+      "sha256": "119ad7aadad955be20fe70903c29ebd774c6d1470e7a793746a3dd5d2ebe60ef"
+    },
+    "macos": {
+      "artifact": "Notanda-1.3.0.dmg",
+      "signing": "ad-hoc only; not Developer-ID signed or notarized",
+      "sha256": "928cbe2c1a031c00f5033cd75130d458f3a6c5a6122b5bd126ea549284fa2210"
+    }
+  },
+  "source_baseline": {
+    "old_windows_guide": {
+      "source": "Google Drive",
+      "title": "INSTALL-WINDOWS.md",
+      "id": "1ErMfQ5eP6g2SP25cU4FMQyQ7EmbLoBgu2LLVD10odKo",
+      "note": "Frozen 1.3.0 wheel/Python/venv guide; retained only as historical usability/evidence baseline."
+    },
+    "old_macos_guide": {
+      "source": "Google Drive",
+      "title": "Notanda_macOS-Anleitung_1.3.0_Entwurf_VERIFIZIERT.pdf",
+      "id": "1XX0kbuF8XWU1I_qdWTbBvS2oWUcsM7J-",
+      "note": "Old terminal/Python draft; superseded functionally by the standalone app path."
+    },
+    "referenced_start_prompt": {
+      "title": "Notanda_Startprompt_Anleitungen_2026-09-20.md",
+      "retrieval_status": "not found by exact-name search in currently accessible File Library or Google Drive",
+      "handling": "No content was invented; available frozen guides and current repository/release state were used instead."
+    }
+  },
+  "prepared_files": [
+    "docs/install/TEST-WINDOWS-UNSIGNED-20260921.md",
+    "docs/install/TEST-MACOS-ADHOC-20260921.md",
+    "INSTALL-WINDOWS.de.md",
+    "INSTALL-WINDOWS.en.md",
+    "INSTALL-MACOS.de.md",
+    "INSTALL-MACOS.en.md"
+  ],
+  "guide_status": {
+    "windows": "Functionally complete except exact SmartScreen text and installer GUI button sequence, which remain explicitly marked as empirical validation points.",
+    "macos": "Functionally complete except exact Gatekeeper alert wording, which remains explicitly marked as an empirical validation point.",
+    "rule": "Do not replace empirical wording with generic platform wording."
+  },
+  "external_validation": {
+    "windows": {
+      "status": "REQUEST_SENT",
+      "tester": "Daniel",
+      "contact": "daniel.kiechleseminario@gmail.com",
+      "gmail_message_id": "1a0c4008f29011fd",
+      "subject": "Notanda: kurzer Windows-SmartScreen-Test mit dem neuen Installer",
+      "requested_evidence": [
+        "Windows edition/version/build and UI language",
+        "browser/version",
+        "screenshots of every SmartScreen/security warning state",
+        "exact warning text and exact visible button labels",
+        "exact installer GUI sequence",
+        "UAC/elevation behavior",
+        "installed app launch and local control-center result",
+        "first-run Settings result",
+        "uninstall and user-data preservation result",
+        "any point at which help was needed"
+      ],
+      "security_rule": "No security feature may be disabled; stop if normal Run anyway/Trotzdem ausführen path is unavailable."
+    },
+    "macos": {
+      "status": "READY_BUT_NOT_SENT",
+      "reason": "No verified contact channel for the previous macOS tester is available in the connected project context.",
+      "protocol": "docs/install/TEST-MACOS-ADHOC-20260921.md",
+      "required_path": "System Settings -> Privacy & Security -> Security -> Open Anyway -> Open",
+      "security_rule": "Do not disable Gatekeeper and do not use Terminal bypass commands."
+    }
+  },
+  "official_platform_reference_only_not_empirical_evidence": {
+    "windows": [
+      "https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/publish-first-app",
+      "Microsoft documents the generic unsigned/new-app path as More info -> Run anyway; actual Notanda wording must come from the foreign-machine test."
+    ],
+    "macos": [
+      "https://support.apple.com/de-at/102445",
+      "https://support.apple.com/en-am/102445",
+      "Apple documents Privacy & Security -> Open Anyway -> Open and notes that warning variants can differ; actual Notanda wording must come from the foreign-machine test."
+    ]
+  },
+  "completion_gate": [
+    "One real Windows foreign-machine run returns exact warning wording and GUI click sequence.",
+    "One real macOS foreign-machine run returns exact Gatekeeper wording and GUI click sequence through Open Anyway.",
+    "German and English guides are updated with those observations and reviewed for no-terminal usability.",
+    "Only then may the guides be marked empirically verified/final for the current unsigned/ad-hoc release."
+  ],
+  "scope_boundaries": {
+    "no_signpath_dependency_for_this_work": true,
+    "no_brand_or_landing_page_changes": true,
+    "no_mcp_work": true,
+    "no_main_merge_yet": true
+  }
+}

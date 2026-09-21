@@ -1,0 +1,198 @@
+name: macOS and Linux installer PoC
+
+on:
+  push:
+    branches:
+      - feature/standalone-installer-v1-20260921
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  macos-dmg:
+    runs-on: macos-15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install packaging tools
+        run: python -m pip install -e ".[packaging]"
+
+      - name: Build macOS app
+        run: |
+          briefcase create macOS --no-input
+          briefcase build macOS --no-input
+          briefcase package macOS -p dmg --adhoc-sign --no-input
+
+      - name: Hash and smoke-test DMG
+        shell: bash
+        run: |
+          set -euo pipefail
+          dmg="$(find dist -name '*.dmg' -type f | head -1)"
+          test -n "$dmg"
+          shasum -a 256 "$dmg" | tee installer-sha256-macos.txt
+
+          rm -rf "$HOME/Notanda" /tmp/Notanda.app /tmp/notanda-mount.plist
+          hdiutil attach -nobrowse -readonly -plist "$dmg" > /tmp/notanda-mount.plist
+          mount_point="$(python - <<'PY'
+import plistlib
+with open('/tmp/notanda-mount.plist', 'rb') as f:
+    data = plistlib.load(f)
+for entity in data.get('system-entities', []):
+    if 'mount-point' in entity:
+        print(entity['mount-point'])
+        break
+PY
+)"
+          test -n "$mount_point"
+          cp -R "$mount_point/Notanda.app" /tmp/Notanda.app
+          hdiutil detach "$mount_point"
+
+          old_path="$PATH"
+          export PATH="/usr/bin:/bin"
+          /tmp/Notanda.app/Contents/MacOS/Notanda >/tmp/notanda-macos.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true; export PATH="$old_path"' EXIT
+
+          ready=0
+          for attempt in $(seq 1 30); do
+            if /usr/bin/curl -fsS http://127.0.0.1:8765/api/settings >/tmp/notanda-settings.json; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$pid" 2>/dev/null; then
+              cat /tmp/notanda-macos.log
+              echo "Notanda exited before control center became ready" >&2
+              exit 1
+            fi
+            sleep 1
+          done
+          test "$ready" -eq 1
+          python - <<'PY'
+import json
+from pathlib import Path
+data = json.load(open('/tmp/notanda-settings.json', encoding='utf-8'))
+entry = next(s for s in data['settings'] if s['key'] == 'openalex.api_key')
+assert entry['configured'] is False
+root = Path.home() / 'Notanda'
+assert (root / 'config' / 'harvester.json').is_file()
+for name in ('corpus', 'state', 'reports'):
+    assert (root / name).is_dir()
+PY
+          kill "$pid" || true
+          wait "$pid" 2>/dev/null || true
+          trap - EXIT
+          export PATH="$old_path"
+          test -d "$HOME/Notanda"
+
+      - name: Upload internal macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: notanda-macos-dmg-adhoc
+          path: |
+            dist/**/*.dmg
+            installer-sha256-macos.txt
+          if-no-files-found: error
+
+  linux-deb:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install packaging tools
+        run: python -m pip install -e ".[packaging]"
+
+      - name: Build Linux system package
+        run: |
+          briefcase create linux system --no-input
+          briefcase build linux system --no-input
+          briefcase package linux system --adhoc-sign --no-input
+
+      - name: Hash, install, launch and uninstall DEB
+        shell: bash
+        run: |
+          set -euo pipefail
+          deb="$(find dist -name '*.deb' -type f | head -1)"
+          test -n "$deb"
+          sha256sum "$deb" | tee installer-sha256-linux.txt
+
+          rm -rf "$HOME/Notanda"
+          sudo apt-get update -qq
+          sudo apt-get install -y "$deb"
+
+          pkg="$(dpkg-deb -f "$deb" Package)"
+          exe="$(dpkg -L "$pkg" | while read -r path; do
+            if [ -f "$path" ] && [ -x "$path" ]; then
+              base="$(basename "$path")"
+              case "$base" in
+                Notanda|notanda|harvester) echo "$path"; break ;;
+              esac
+            fi
+          done)"
+          if [ -z "$exe" ]; then
+            echo "Could not locate installed Notanda executable. Package contents:" >&2
+            dpkg -L "$pkg" >&2
+            exit 1
+          fi
+
+          old_path="$PATH"
+          export PATH="/usr/bin:/bin"
+          "$exe" >/tmp/notanda-linux.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true; export PATH="$old_path"' EXIT
+
+          ready=0
+          for attempt in $(seq 1 30); do
+            if /usr/bin/curl -fsS http://127.0.0.1:8765/api/settings >/tmp/notanda-settings.json; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$pid" 2>/dev/null; then
+              cat /tmp/notanda-linux.log
+              echo "Notanda exited before control center became ready" >&2
+              exit 1
+            fi
+            sleep 1
+          done
+          test "$ready" -eq 1
+          python - <<'PY'
+import json
+from pathlib import Path
+data = json.load(open('/tmp/notanda-settings.json', encoding='utf-8'))
+entry = next(s for s in data['settings'] if s['key'] == 'openalex.api_key')
+assert entry['configured'] is False
+root = Path.home() / 'Notanda'
+assert (root / 'config' / 'harvester.json').is_file()
+for name in ('corpus', 'state', 'reports'):
+    assert (root / name).is_dir()
+PY
+          kill "$pid" || true
+          wait "$pid" 2>/dev/null || true
+          trap - EXIT
+          export PATH="$old_path"
+
+          sudo apt-get remove -y "$pkg"
+          test -d "$HOME/Notanda"
+
+      - name: Upload internal Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: notanda-linux-deb-unsigned
+          path: |
+            dist/**/*.deb
+            installer-sha256-linux.txt
+          if-no-files-found: error

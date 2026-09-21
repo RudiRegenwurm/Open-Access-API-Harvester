@@ -1,0 +1,118 @@
+{
+  "manifest_version": "1.0",
+  "created_utc": "2026-09-21T10:07:00Z",
+  "task": "Notanda standalone installer / independent application V1",
+  "status": "TECHNICAL_PACKAGING_PROVEN_SIGNING_PENDING",
+  "repository": "RudiRegenwurm/Open-Access-API-Harvester",
+  "branch": "feature/standalone-installer-v1-20260921",
+  "base_commit": "32621ce3a787f4e9256e08c2e1f4f74f29de81f7",
+  "implementation_source_commit": "2039d9e8e73f0b83ca6e78d3902035de8133bf50",
+  "adr": {
+    "path": "docs/adr/0004-standalone-desktop-packaging.md",
+    "decision_commit": "9258b25b9717bc23b9a7e590a1c417ad28c1b5c5",
+    "packaging_tool": "Briefcase 0.4.5",
+    "fallback": "PyInstaller plus a platform installer builder if Briefcase ceases to meet the acceptance criteria"
+  },
+  "implementation": {
+    "desktop_launcher": "src/harvester/desktop.py",
+    "package_entry_point": "src/harvester/__main__.py",
+    "first_run_behavior": "If no OpenAlex API key is configured, the initial web UI route opens Settings.",
+    "user_data_root": {
+      "windows": "%USERPROFILE%\\Notanda",
+      "macos": "~/Notanda",
+      "linux": "~/Notanda"
+    },
+    "data_layout": [
+      "config/harvester.json",
+      "state/harvester.sqlite3",
+      "reports/",
+      "corpus/"
+    ],
+    "secret_handling": "Existing Settings API is reused; secret values are masked/redacted in UI/API responses. No manual config-file editing is required."
+  },
+  "verification": {
+    "windows": {
+      "github_actions_run": 35586617355,
+      "workflow_job": 106291332032,
+      "result": "success",
+      "offline_tests": "735 passed, 1 skipped, 8 deselected",
+      "artifact": "Notanda-1.3.0.msi",
+      "artifact_sha256": "119ad7aadad955be20fe70903c29ebd774c6d1470e7a793746a3dd5d2ebe60ef",
+      "actions_artifact_id": 10633082147,
+      "actions_artifact_zip_sha256": "62f7cfe4ab3aa1898beccd3f1c7deb8231172ae83a642582f2c1cf0de2dc39ba",
+      "checks": [
+        "MSI built on Windows runner",
+        "MSI installed silently",
+        "application launched with PATH reduced to Windows system directories and no Python on PATH",
+        "local control center became reachable on 127.0.0.1:8765",
+        "first-run Settings API reported OpenAlex key unconfigured",
+        "per-user config/corpus/state/reports paths were created",
+        "MSI uninstalled successfully",
+        "user data root remained after uninstall"
+      ],
+      "signing": "unsigned/internal validation only",
+      "production_blocker": "Public-trust Authenticode signing identity and signed-artifact validation"
+    },
+    "macos": {
+      "github_actions_run": 35586617462,
+      "workflow_job": 106291332688,
+      "result": "success",
+      "artifact": "Notanda-1.3.0.dmg",
+      "artifact_sha256": "928cbe2c1a031c00f5033cd75130d458f3a6c5a6122b5bd126ea549284fa2210",
+      "actions_artifact_id": 10632313176,
+      "actions_artifact_zip_sha256": "f36c097e6425447bd1adc49e202f0af15eaac3672e366caad68ed91fc0ab816a",
+      "checks": [
+        "application bundle and DMG built on macOS runner",
+        "DMG mounted and Notanda.app copied out",
+        "application launched with PATH reduced to /usr/bin:/bin",
+        "local control center became reachable on 127.0.0.1:8765",
+        "first-run Settings API reported OpenAlex key unconfigured",
+        "per-user config/corpus/state/reports paths were created"
+      ],
+      "signing": "ad-hoc signing only; internal validation only",
+      "notarization": "not performed",
+      "production_blocker": "Apple Developer ID signing plus notarization and stapling"
+    },
+    "linux": {
+      "github_actions_run": 35586617462,
+      "workflow_job": 106291332407,
+      "result": "success",
+      "artifact": "harvester_1.3.0-1~ubuntu-noble_amd64.deb",
+      "artifact_sha256": "37e300384a9ac7949391023b9a4f2509dbe1068e1e8d6e06d9faf180df84d52c",
+      "actions_artifact_id": 10632009430,
+      "actions_artifact_zip_sha256": "9e4355365ca71ff045a74bee62b4cd99a75c87bb38a12c5b84e38f33ebee3dbc",
+      "checks": [
+        "native Ubuntu 24.04 package built",
+        "package installed through apt",
+        "installed application launched with PATH reduced to /usr/bin:/bin",
+        "local control center became reachable on 127.0.0.1:8765",
+        "first-run Settings API reported OpenAlex key unconfigured",
+        "per-user config/corpus/state/reports paths were created",
+        "package removed successfully",
+        "user data root remained after uninstall"
+      ],
+      "runtime_note": "Briefcase Linux system packages use the distribution's system Python runtime. The user does not install Python manually; apt resolves package dependencies. This is installer-simple but not a byte-self-contained runtime in the Windows/macOS sense.",
+      "signing": "unsigned/internal validation only",
+      "production_blocker": "Signed Linux distribution/repository path and broader distribution compatibility validation"
+    }
+  },
+  "production_readiness": {
+    "ready_for_public_unassisted_distribution": false,
+    "reason": "The packaging and install/launch lifecycle are proven, but Windows public-trust signing and macOS Developer ID notarization are not yet provisioned.",
+    "remaining_external_prerequisites": [
+      "Obtain an accepted Windows code-signing route (preferred OSS route: SignPath Foundation if accepted; otherwise OV certificate).",
+      "Enroll in Apple Developer Program and provision Developer ID Application/notarization credentials."
+    ],
+    "remaining_product_acceptance": [
+      "Validate signed Windows installer on a clean non-developer machine with a real user.",
+      "Validate Developer-ID-signed and notarized macOS DMG on a separate Mac.",
+      "Run a real literature search, acquire at least one OA full text, and verify its integrity from each target installer build.",
+      "Decide whether Ubuntu/Debian native package coverage is sufficient for Linux beta or whether Flatpak/AppImage is required."
+    ]
+  },
+  "scope_boundaries": {
+    "no_brand_or_landing_page_changes": true,
+    "no_mcp_work": true,
+    "no_public_release_or_tag_created": true
+  }
+}

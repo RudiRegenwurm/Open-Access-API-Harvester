@@ -19,9 +19,11 @@ jobs:
         run: |
           set -euo pipefail
           curl --fail --silent --show-error --location \
+            -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/153 Safari/537.36' \
+            -H 'Accept: application/json, text/plain, */*' \
             -H 'Origin: https://signpath.org' \
             -H 'Referer: https://signpath.org/apply.html' \
-            'https://forms-eu1.hsforms.com/embed/v3/form/145110231/bf62807d-bb72-4e45-9bde-1f3a53ba2472/json' \
+            'https://forms-eu1.hsforms.com/embed/v3/form/145110231/bf62807d-bb72-4e45-9bde-1f3a53ba2472/json?hs_static_app=forms-embed&hs_static_app_version=1.11140&X-HubSpot-Static-App-Info=forms-embed-1.11140' \
             -o signpath-form.json
           python -c "import json, pathlib; p=pathlib.Path('signpath-form.json'); print(json.dumps(json.loads(p.read_text(encoding='utf-8')), indent=2, ensure_ascii=False))"
 

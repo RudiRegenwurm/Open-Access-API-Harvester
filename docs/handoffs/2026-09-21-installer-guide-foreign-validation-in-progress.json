@@ -2,7 +2,7 @@
   "manifest_version": "1.0",
   "created_utc": "2026-09-21T12:44:00Z",
   "task": "Empirical foreign-machine validation for unsigned Windows and ad-hoc macOS installer guides",
-  "status": "EXTERNAL_GUI_VALIDATION_PREPARED_CONTACT_HOLD",
+  "status": "EXTERNAL_GUI_VALIDATION_IN_PROGRESS_REGULAR_BETA_ENTRY_FOR_ADDITIONAL_TESTERS",
   "repository": "RudiRegenwurm/Open-Access-API-Harvester",
   "branch": "docs/installer-guides-foreign-test-20260921",
   "base_main_commit": "433af04bcfa030dc2c4c699ff1e184081ae3a03c",
@@ -74,37 +74,32 @@
         "uninstall and user-data preservation result",
         "any point at which help was needed"
       ],
-      "security_rule": "No security feature may be disabled; stop if normal Run anyway/Trotzdem ausführen path is unavailable."
+      "security_rule": "No security feature may be disabled; stop if normal Run anyway/Trotzdem ausführen path is unavailable.",
+      "note": "Daniel remains the active Windows guide-validation tester. No additional development-side outreach is authorized."
     },
     "macos": {
       "status": "READY_CONTACT_HOLD",
       "reason": "Protocol is prepared, but no contact is to be initiated until Rudolf explicitly releases contact.",
       "protocol": "docs/install/TEST-MACOS-ADHOC-20260921.md",
       "required_path": "System Settings -> Privacy & Security -> Security -> Open Anyway -> Open",
-      "security_rule": "Do not disable Gatekeeper and do not use Terminal bypass commands."
+      "security_rule": "Do not disable Gatekeeper and do not use Terminal bypass commands.",
+      "note": "Alex remains the designated macOS guide-validation tester. Additional colleagues do not use a development-side invitation path."
     },
-    "additional_invited_test_pool": {
+    "additional_testers": {
       "maximum_people": 4,
       "profile": "two former engineering colleagues and two physicists; technically experienced",
-      "status": "PREPARED_CONTACT_HOLD",
-      "protocol_rule": "Use the same Windows or macOS protocol as Daniel/Alex according to each person's platform.",
-      "evidence_required": [
-        "security-warning state photographed before every click",
-        "exact warning wording and every visible button label",
-        "installer dialogs in sequence",
-        "application start and local control-center result",
-        "first-run configuration result",
-        "uninstall/removal result",
-        "any point where assistance was needed"
+      "entry_path": "Regular beta request via the 'Request beta access' button on notanda.io.",
+      "handling": "Rudolf personally reviews beta@notanda.io and replies himself. The development workstream does not invite, prepare mail for, or contact these testers.",
+      "development_role_after_user_request": "Keep the published Installer Preview downloadable and provide/maintain the same platform test protocols if Rudolf chooses to send the installer after the user's beta request.",
+      "platform_protocols": {
+        "windows": "docs/install/TEST-WINDOWS-UNSIGNED-20260921.md",
+        "macos": "docs/install/TEST-MACOS-ADHOC-20260921.md"
+      },
+      "security_rules": [
+        "Windows: capture each SmartScreen/security state before clicking; do not disable Windows Security, SmartScreen, Smart App Control, antivirus or firewall.",
+        "macOS: capture each Gatekeeper state before clicking; use System Settings -> Privacy & Security -> Open Anyway -> Open; no xattr, no spctl, no Gatekeeper disable."
       ],
-      "invitation_requirements": [
-        "state clearly that the build is a technical preview and not the recommended path for non-technical users",
-        "send only to explicitly invited testers whose contact details Rudolf provides",
-        "do not forward or recruit uninvolved third parties",
-        "Windows: do not disable Windows Security/SmartScreen/Smart App Control/antivirus/firewall",
-        "macOS: no xattr, no spctl, no disabling Gatekeeper; use System Settings -> Privacy & Security -> Open Anyway -> Open"
-      ],
-      "contact_rule": "No invitation or follow-up is sent until Rudolf provides contact/platform information and explicitly authorizes contact."
+      "status": "NO_DEVELOPMENT_OUTREACH_OR_INVITATION_PREPARATION"
     }
   },
   "official_platform_reference_only_not_empirical_evidence": {
@@ -132,23 +127,40 @@
     "no_main_merge_yet": true,
     "no_uninvited_third_party_distribution": true,
     "test_mails_must_label_technical_preview": true,
-    "no_new_tester_contact_until_explicit_release": true
+    "no_new_tester_contact_until_explicit_release": true,
+    "no_direct_outreach_to_additional_four_testers": true,
+    "no_invitation_preparation_for_additional_four_testers": true,
+    "beta_requests_handled_personally_by_rudolf": true,
+    "keep_installer_preview_downloadable": true
   },
-  "updated_utc": "2026-09-21T13:13:00Z",
+  "updated_utc": "2026-09-21T13:24:30Z",
   "policy_update": {
     "date": "2026-09-21",
-    "decision": "The previous plan to wait for a simpler/signed build before involving four former engineering/physics colleagues is withdrawn.",
-    "rationale": "The current Installer Preview is explicitly a technical pre-release and is appropriate for technically experienced invited testers.",
-    "effect": "Up to four additional testers may use the current public Installer Preview as soon as Rudolf supplies verified contact details and the platform for each person."
+    "decision": "Up to four technically experienced colleagues may test the current Installer Preview, but they enter only through the regular Request beta access workflow on notanda.io.",
+    "effect": "No development-side invitations or mail templates are needed. Rudolf personally handles beta@notanda.io. The development workstream continues Daniel/Windows and Alex/macOS guide validation and maintains the Installer Preview download."
   },
-  "contact_hold": {
-    "effective_from": "2026-09-21T13:12:27Z",
-    "instruction": "Do not contact any additional tester. Prepare materials only until Rudolf explicitly releases contact.",
-    "applies_to": [
-      "Alex macOS follow-up",
-      "up to four additional former engineering/physics colleagues",
-      "any other new installer-preview tester"
+  "invitation_templates": {
+    "docs/install/INVITE-WINDOWS-TEMPLATE.de.md": "OBSOLETE_INTERNAL_NOTE_ONLY_NOT_A_SEND_PATH",
+    "docs/install/INVITE-MACOS-TEMPLATE.de.md": "OBSOLETE_INTERNAL_NOTE_ONLY_NOT_A_SEND_PATH",
+    "rule": "These files may remain for history but must not be used, sent, or treated as part of the beta-access workflow."
+  },
+  "beta_access_workflow": {
+    "public_entry": "Request beta access button on notanda.io",
+    "inbox": "beta@notanda.io",
+    "owner": "Rudolf Kiechle",
+    "development_workstream_action": "none until Rudolf separately requests technical work after a beta inquiry",
+    "direct_invitation_by_development": false
+  },
+  "release_availability": {
+    "status_checked_utc": "2026-09-21T13:24:30Z",
+    "release_url": "https://github.com/RudiRegenwurm/Open-Access-API-Harvester/releases/tag/v1.3.0-installer-preview.1",
+    "prerelease": true,
+    "assets_present": [
+      "Notanda-1.3.0.msi",
+      "Notanda-1.3.0.dmg",
+      "harvester_1.3.0-1.ubuntu-noble_amd64.deb",
+      "SHA256SUMS.txt"
     ],
-    "note": "Daniel had already been contacted before this hold instruction; no further follow-up is to be sent unless Rudolf explicitly requests it."
+    "requirement": "Keep this technical pre-release usable as a download source unless a later explicit decision supersedes it."
   }
 }

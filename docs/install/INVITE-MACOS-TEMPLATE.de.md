@@ -1,6 +1,6 @@
 # Template — macOS installer preview test invitation
 
-**Status:** prepared only — do not send until Rudolf supplies the tester's contact details and explicitly releases contact.
+**Status:** OBSOLETE INTERNAL NOTE ONLY — not part of the beta-access workflow and must not be sent. New testers use the regular “Request beta access” path on notanda.io; Rudolf handles beta@notanda.io personally.
 
 Subject: Notanda: technischer macOS-Installer-Test
 

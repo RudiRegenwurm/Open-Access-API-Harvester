@@ -88,20 +88,16 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-
-      - name: Install packaging tools
-        run: python -m pip install -e ".[packaging]"
+      - name: Create packaging environment from Ubuntu system Python
+        run: |
+          python3 -m venv .briefcase-venv
+          .briefcase-venv/bin/python -m pip install -e ".[packaging]"
 
       - name: Build Linux system package
         run: |
-          briefcase create linux system --no-input
-          briefcase build linux system --no-input
-          briefcase package linux system --adhoc-sign --no-input
+          .briefcase-venv/bin/briefcase create linux system --no-input
+          .briefcase-venv/bin/briefcase build linux system --no-input
+          .briefcase-venv/bin/briefcase package linux system --adhoc-sign --no-input
 
       - name: Hash, install, launch and uninstall DEB
         shell: bash

@@ -1,0 +1,39 @@
+name: Inspect SignPath application form
+
+on:
+  push:
+    branches:
+      - ops/signpath-application-20260921
+    paths:
+      - .github/workflows/inspect-signpath-form.yml
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Fetch public HubSpot form definition
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location \
+            -H 'Origin: https://signpath.org' \
+            -H 'Referer: https://signpath.org/apply.html' \
+            'https://forms-eu1.hsforms.com/embed/v3/form/145110231/bf62807d-bb72-4e45-9bde-1f3a53ba2472/json' \
+            -o signpath-form.json
+          python - <<'PY'
+import json
+from pathlib import Path
+p=Path('signpath-form.json')
+data=json.loads(p.read_text(encoding='utf-8'))
+print(json.dumps(data, indent=2, ensure_ascii=False))
+PY
+
+      - name: Upload form definition
+        uses: actions/upload-artifact@v4
+        with:
+          name: signpath-public-form-definition
+          path: signpath-form.json
+          if-no-files-found: error

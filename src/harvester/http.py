@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """HTTP transport: provider-aware rate limiting, retry classification, budget tracking.
 
 MASTER_SPEC sections 26, 27, 28, 38, 39 and SPEC_PATCH sections 2 and 7.

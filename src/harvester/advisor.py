@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Query Advisor — Assisted Search V1 (SPEC_ASSISTED_SEARCH_V1 sections 10-16, 36-38).
 
 Scope, deliberately small:

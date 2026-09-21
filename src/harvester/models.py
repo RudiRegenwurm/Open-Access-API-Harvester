@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Normalized domain model (MASTER_SPEC section 8).
 
 Core business logic operates exclusively on these types. Provider-specific response

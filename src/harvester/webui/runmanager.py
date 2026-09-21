@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Background execution of harvest, resume and verify operations.
 
 Each operation is executed by the existing core service on a worker thread. The

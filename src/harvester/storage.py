@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Final storage: the flat A1 corpus and its mandatory JSON sidecars.
 
 SPEC_PATCH section 3 fixes the downstream-facing layout as a hard product invariant::

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Canonical identity: DOI normalization, document IDs and filesystem safety.
 
 MASTER_SPEC sections 9 and 37.

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Local web UI for the Open-Access API Harvester.
 
 A thin control center. Every capability it exposes is executed by the existing core

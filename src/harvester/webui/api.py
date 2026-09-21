@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """JSON API for the local control center.
 
 Every handler is a thin adapter: it validates the request, calls an existing core

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Persistent state (MASTER_SPEC sections 22, 46, 47, 49).
 
 SQLite in WAL mode. One connection per thread; every state transition that could leave

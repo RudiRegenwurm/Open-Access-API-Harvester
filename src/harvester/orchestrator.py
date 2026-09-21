@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Harvest orchestration: discovery, deduplication, acquisition, ingestion, reporting.
 
 Implements the pipeline of MASTER_SPEC section 0 with the resumability, idempotency,

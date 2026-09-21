@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Reading and writing the operator's local configuration file.
 
 The UI edits the same JSON configuration file the CLI accepts through ``--config``,

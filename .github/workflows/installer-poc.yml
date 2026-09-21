@@ -27,7 +27,7 @@ jobs:
         run: python -m pip install -e ".[dev,packaging]"
 
       - name: Run offline test suite
-        run: pytest
+        run: python -m pytest
 
       - name: Create Windows app scaffold
         run: briefcase create windows --no-input

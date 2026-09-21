@@ -1,0 +1,61 @@
+{
+  "manifest_version": "1.0",
+  "created_utc": "2026-09-21T10:24:00Z",
+  "task": "Zero-recurring-cost signing policy and SignPath application path",
+  "repository": "RudiRegenwurm/Open-Access-API-Harvester",
+  "branch": "feature/standalone-installer-v1-20260921",
+  "decision_commit": "61cd0c7e27b949001bc265438451158d0eb78242",
+  "adr": {
+    "path": "docs/adr/0005-zero-recurring-cost-platform-trust.md",
+    "status": "Accepted",
+    "supersedes": "ADR 0004 signing/notarization section and related acceptance criteria"
+  },
+  "windows": {
+    "strategy": "SignPath Foundation free OSS signing only",
+    "paid_certificate_fallback": false,
+    "code_signing_policy": "CODE_SIGNING_POLICY.md",
+    "maintainer_roles": {
+      "author_committer": "Rudolf Kiechle (@RudiRegenwurm)",
+      "reviewer_for_non_committer_changes": "Rudolf Kiechle (@RudiRegenwurm)",
+      "release_approver": "Rudolf Kiechle (@RudiRegenwurm)"
+    },
+    "manual_approval_required_for_every_release_signing_request": true,
+    "application_status": "PRE_APPLICATION_ELIGIBILITY_INQUIRY_SENT",
+    "official_application_form_submitted": false,
+    "reason_official_form_not_submitted": "SignPath Foundation's published conditions require the project to already be released in the form to be signed and documented on a download page. Notanda currently intentionally has no public installer/download artifact. Submitting as already eligible would conflict with the project's current public-release boundary.",
+    "inquiry": {
+      "recipient": "support@signpath.io",
+      "subject": "SignPath Foundation OSS signing — Notanda eligibility before application",
+      "gmail_message_id": "1a0c38204b91d0aa",
+      "gmail_thread_id": "1a0c38204b91d0aa",
+      "question": "Whether a public source repository plus technically validated but restricted-beta MSI is eligible before a public unsigned installer exists."
+    }
+  },
+  "macos": {
+    "strategy": "Continue ad-hoc signing; no paid Apple Developer Program membership",
+    "annual_paid_membership": false,
+    "notarization": false,
+    "install_guide": "INSTALL-MACOS.md",
+    "gatekeeper_primary_path": "System Settings -> Privacy & Security -> Security -> Open Anyway -> Open",
+    "secondary_path_note": "Control-click/right-click -> Open may work on some configurations but is not the canonical documented path.",
+    "accepted_tradeoff": "The original no-friction double-click goal cannot be fully met on macOS without Developer ID/notarization. One-time Gatekeeper friction remains; managed Macs may forbid the override."
+  },
+  "linux": {
+    "strategy": "Keep existing native package path",
+    "additional_paid_signing_service": false
+  },
+  "public_release_boundary": {
+    "public_installer_created": false,
+    "github_release_created": false,
+    "tag_created": false,
+    "main_merged": false
+  },
+  "references_checked": [
+    "https://signpath.org/terms.html",
+    "https://signpath.org/apply.html",
+    "https://docs.signpath.io/projects",
+    "https://developer.apple.com/programs/enroll/",
+    "https://developer.apple.com/support/compare-memberships/",
+    "https://support.apple.com/de-de/102445"
+  ]
+}

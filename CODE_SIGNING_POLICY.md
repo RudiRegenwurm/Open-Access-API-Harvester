@@ -109,7 +109,8 @@ Project contact: `beta@notanda.io`
 ## Status
 
 As of 2026-09-21, this policy is prepared for a SignPath Foundation application. A public,
-unsigned Installer Preview is being published to satisfy the Foundation's "released in the form
-that should be signed" condition. The preview is not recommended for non-technical users and is
+unsigned Installer Preview has been published to satisfy the Foundation's "released in the form
+that should be signed" condition:
+https://github.com/RudiRegenwurm/Open-Access-API-Harvester/releases/tag/v1.3.0-installer-preview.1 The preview is not recommended for non-technical users and is
 not a SignPath-signed release. No SignPath Foundation certificate or subscription is claimed until
 SignPath confirms acceptance.

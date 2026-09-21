@@ -7,8 +7,9 @@ package and CLI keep their established technical names
 This repository publishes the reviewed 1.3.0 product-core source. It is not a hosted
 service and the recommended accompanied beta path remains `beta@notanda.io`.
 
-A public **Installer Preview** may be available under GitHub Releases solely as a
-technical pre-release. Those installers are unsigned on Windows/Linux and ad-hoc signed
+A public **Installer Preview** is available under GitHub Releases solely as a
+technical pre-release:
+https://github.com/RudiRegenwurm/Open-Access-API-Harvester/releases/tag/v1.3.0-installer-preview.1 Those installers are unsigned on Windows/Linux and ad-hoc signed
 on macOS, may trigger SmartScreen/Gatekeeper warnings, and are **not the recommended
 installation path for non-technical users**.
 

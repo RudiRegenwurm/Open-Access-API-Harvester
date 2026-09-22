@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "oa-harvester"
+name = "notanda"
 version = "1.3.0"
 description = "Open-Access API Harvester: resumable, idempotent, headless CLI for harvesting Open-Access scholarly documents."
 requires-python = ">=3.10"

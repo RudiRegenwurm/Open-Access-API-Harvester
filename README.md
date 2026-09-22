@@ -1,8 +1,8 @@
 # Notanda — Open-Access API Harvester
 
-**Notanda** is the public product name. The repository, Python distribution,
+**Notanda** is the public product name and PyPI distribution name. The repository, Python import
 package and CLI keep their established technical names
-`Open-Access-API-Harvester`, `oa-harvester`, `harvester` and `harvester`.
+`Open-Access-API-Harvester`, `harvester` and `harvester`.
 
 This repository publishes the reviewed 1.3.0 product-core source. It is not a hosted
 service and the recommended accompanied beta path remains `beta@notanda.io`.
@@ -30,6 +30,10 @@ LLM application. It is a document harvesting pipeline with persistent state.
 ---
 
 ## Quick start
+
+```bash
+pipx install notanda
+```
 
 ```bash
 python3 -m venv .venv && . .venv/bin/activate

@@ -4,7 +4,7 @@
 package and CLI keep their established technical names
 `Open-Access-API-Harvester`, `harvester` and `harvester`.
 
-This repository publishes the reviewed 1.3.0 product-core source. It is not a hosted
+This repository publishes the reviewed 1.3.1 product-core source. It is not a hosted
 service and the recommended accompanied beta path remains `beta@notanda.io`.
 
 A public **Installer Preview** is available under GitHub Releases solely as a
@@ -31,9 +31,25 @@ LLM application. It is a document harvesting pipeline with persistent state.
 
 ## Quick start
 
+With Python 3.10 or newer, install the PyPI distribution in a fresh virtual environment:
+
+```bash
+python -m venv .venv
+# Linux/macOS:
+source .venv/bin/activate
+# Windows PowerShell:
+# .venv\Scripts\Activate.ps1
+python -m pip install notanda
+harvester --version
+```
+
+For an isolated application install with pipx:
+
 ```bash
 pipx install notanda
 ```
+
+For development from a repository checkout:
 
 ```bash
 python3 -m venv .venv && . .venv/bin/activate

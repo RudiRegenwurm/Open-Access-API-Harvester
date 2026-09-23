@@ -9,4 +9,4 @@ Unpaywall for OA locations, and stores validated PDF/XML artifacts plus mandator
 JSON sidecars in a flat downstream corpus.
 """
 
-__version__ = "1.3.0"
+__version__ = "1.3.1"

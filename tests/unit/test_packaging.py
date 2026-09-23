@@ -18,7 +18,7 @@ import pytest
 
 import harvester
 
-DISTRIBUTION = "oa-harvester"
+DISTRIBUTION = "notanda"
 PYPROJECT = Path(__file__).resolve().parents[2] / "pyproject.toml"
 
 #: A release version, so a placeholder or a stray edit is rejected rather than shipped.

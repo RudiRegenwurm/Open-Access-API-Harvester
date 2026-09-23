@@ -25,6 +25,10 @@ dev = ["pytest>=8.0", "pytest-cov>=5.0"]
 [project.scripts]
 harvester = "harvester.cli:main"
 
+[project.urls]
+Homepage = "https://notanda.io"
+Repository = "https://github.com/RudiRegenwurm/Open-Access-API-Harvester"
+
 [tool.setuptools.packages.find]
 where = ["src"]
 

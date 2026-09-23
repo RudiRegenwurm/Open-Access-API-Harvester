@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Open-Access API Harvester.
 
 A resumable, idempotent, headless CLI pipeline that discovers Open-Access scholarly

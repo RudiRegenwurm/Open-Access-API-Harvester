@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Artifact acquisition: bounded streaming download, validation, atomic publication.
 
 MASTER_SPEC sections 14, 17, 37, 38, 39.

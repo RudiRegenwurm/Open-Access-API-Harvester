@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """The local HTTP server.
 
 Standard-library :class:`http.server.ThreadingHTTPServer` with a small dispatch

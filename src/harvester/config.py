@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Externalised configuration (MASTER_SPEC section 32).
 
 Precedence, highest first:

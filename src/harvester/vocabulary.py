@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Controlled vocabularies for the language and affiliation-country constraints.
 
 These are reference data, not judgements. Both tables were read from the discovery

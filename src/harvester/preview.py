@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Discovery preview — Assisted Search V1 (SPEC_ASSISTED_SEARCH_V1 sections 22-28).
 
 A preview answers one question: *is this query searching the scientific neighbourhood

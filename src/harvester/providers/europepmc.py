@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Europe PMC adapter — secondary identity/metadata cross-check and XML/full-text source.
 
 SPEC_PATCH section 4 replaces the vague "verification via Europe PMC" with explicit

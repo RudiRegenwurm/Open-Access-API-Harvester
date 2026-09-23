@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Corpus verification (MASTER_SPEC section 36).
 
 An operational integrity tool, not a test helper: it scans the local corpus and the

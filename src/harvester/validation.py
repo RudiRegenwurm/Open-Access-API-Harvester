@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Artifact validation (MASTER_SPEC sections 15, 16, 18).
 
 A successful HTTP 200 is never sufficient. An artifact becomes "successful" only after

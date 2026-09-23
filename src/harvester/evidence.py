@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Portable Evidence Ledger export and restore (ADR 0001).
 
 The format is deliberately plain JSON and contains no mutable V1 projection tables.

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """OpenAlex adapter — primary discovery.
 
 Verified provider behavior is recorded in ``docs/providers.md`` section 1. Summary of

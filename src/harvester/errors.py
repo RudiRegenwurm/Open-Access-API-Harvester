@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Structured error model.
 
 MASTER_SPEC section 29: failures are data. Every failure carries a category, the

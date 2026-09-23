@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Run reporting (MASTER_SPEC section 31).
 
 Every run ends with a machine-readable summary written to

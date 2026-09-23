@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Provider adapters.
 
 Each adapter owns its provider's endpoints, authentication, pagination, response

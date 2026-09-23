@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Rudolf Kiechle
+
 """Unpaywall adapter — DOI-based fallback OA-location resolver.
 
 Verified behavior (``docs/providers.md`` section 3): ``GET {base}/{doi}?email=<contact>``.

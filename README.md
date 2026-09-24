@@ -73,6 +73,21 @@ downloading anything, and only then hands the approved query to the same harvest
 pipeline. Assisted Search needs a query-advisor credential; Conventional Search does not
 and is unaffected when the advisor is missing or unavailable.
 
+### Experimental local MCP server
+
+The repository also contains an optional local MCP component under [`mcp/`](mcp/).
+It exposes two deliberately narrow tools — `search_literature` and `get_evidence` —
+and persists the request, provider observation, exact returned result and SHA-256
+manifest under one stable evidence ID. It performs no full-text download or corpus
+write and opens no network server.
+
+The MCP component uses the reviewed `notanda==1.3.1` PyPI release as its core and is
+installed separately from this checkout. It remains experimental and is not included
+in the PyPI 1.3.1 distribution. Five of six acceptance criteria are technically
+satisfied; the external unaccompanied developer test is still pending. Installation,
+client configuration, evidence format and verification steps are documented in the
+[`mcp/README.md`](mcp/README.md).
+
 ### From the command line
 
 ```bash
@@ -176,6 +191,7 @@ missing full text, alternative locations and duplicates.
 | [`TRADEMARKS.md`](TRADEMARKS.md) | treatment of the Notanda name and visual identity assets |
 | [`CODE_SIGNING_POLICY.md`](CODE_SIGNING_POLICY.md) | Windows code signing policy for the SignPath Foundation application |
 | [`INSTALL-MACOS.md`](INSTALL-MACOS.md) | macOS Installer Preview and Gatekeeper exception procedure |
+| [`mcp/README.md`](mcp/README.md) | experimental local MCP server, evidence contract and verification guide |
 
 ## Code signing policy
 

@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "source": {
+    "branch": "experiment/local-mcp",
+    "commit": "366bc2d4827aa915e2e58a82cd567163ed63d4be",
+    "base_commit": "433af04bcfa030dc2c4c699ff1e184081ae3a03c",
+    "sealed_handoff_sha256": "0c0fd4141209e00de17cb42043d4975fdc465c7a66e1a33c02475141707a7ca4",
+    "wheel_sha256": "a54c5e843455916e46d55e16eb39e173df3da949089a05d9fa3cb409778f0b93"
+  },
+  "verified_source_files": {
+    "src/harvester/mcp_experiment.py": "b18d6b826713054e2489f3daa46f460959edd807f7b6cd47e964a3b26cfb0501",
+    "tests/unit/test_mcp_experiment.py": "def5a80ad99c29da4665b21402e4c9961a0e64a933f9a0e8a19d78a00acb3b18",
+    "tools/mcp_client.py": "092e75d20e07881fa5762d6ce164ef2783c33e194afba44f33ec50d504c9e06a",
+    "tools/verify_mcp_evidence.py": "e3cf002f5858adb878e3eff1055957f3284546c3739eecb4d918e8a0c5f91c4a"
+  },
+  "integration": {
+    "core_distribution": "notanda==1.3.1",
+    "mcp_sdk": "mcp==1.30.0",
+    "layout": "separate repository package under mcp/",
+    "changes": [
+      "replaced duplicated core modules with the released Notanda dependency",
+      "renamed the server module from harvester.mcp_experiment to notanda_mcp.server",
+      "added installed core version and source experiment commit to every request record",
+      "adapted client, tests and documentation to the public repository layout",
+      "retained the two-tool scope and original evidence contract"
+    ]
+  },
+  "acceptance": {
+    "deterministic_mcp_tests": "20 passed",
+    "full_product_regression": "732 passed, 1 skipped, 8 deselected",
+    "standalone_install_against_pypi_notanda_1_3_1": "passed",
+    "external_unaccompanied_developer_test": "pending"
+  }
+}

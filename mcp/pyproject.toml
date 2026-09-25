@@ -4,10 +4,18 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "notanda-mcp"
-version = "0.1.0"
-description = "Experimental local MCP server for provenance-aware Notanda literature retrieval."
+version = "0.1.0b1"
+description = "Beta local MCP server for provenance-aware Notanda literature retrieval."
+readme = "README.md"
 requires-python = ">=3.11,<3.13"
 license = "MIT"
+license-files = ["LICENSE"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+]
 dependencies = [
     "notanda==1.3.1",
     "mcp==1.30.0",
@@ -18,6 +26,12 @@ dev = ["pytest>=8.0"]
 
 [project.scripts]
 notanda-mcp = "notanda_mcp.server:main"
+
+[project.urls]
+Homepage = "https://notanda.io"
+Repository = "https://github.com/RudiRegenwurm/Open-Access-API-Harvester"
+Documentation = "https://github.com/RudiRegenwurm/Open-Access-API-Harvester/tree/main/mcp"
+Issues = "https://github.com/RudiRegenwurm/Open-Access-API-Harvester/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]

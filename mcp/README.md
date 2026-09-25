@@ -1,8 +1,13 @@
-# Notanda local MCP server — experimental
+# Notanda local MCP server — Beta
+
+<!-- mcp-name: io.github.RudiRegenwurm/notanda -->
+
+**Beta: the external, unassisted acceptance test by Thomas is still pending.**
+Technical tests do not replace that external usability and installation check.
 
 This directory exposes Notanda's provenance-aware OpenAlex retrieval to local MCP
-clients. It is a narrow, repository-hosted experiment, not a hosted service and not
-part of the `notanda` 1.3.1 package published on PyPI.
+clients. It is a separate `notanda-mcp` package, not a hosted service and not
+part of the `notanda` 1.3.1 package. It depends on that released core.
 
 The component provides exactly two tools:
 
@@ -28,6 +33,25 @@ Five of the six original acceptance criteria are technically satisfied. The sixt
 an external developer with no Notanda knowledge completing installation, search,
 restart and independent verification without assistance — remains **externally to be
 verified** until that result is returned.
+
+## Install the Beta package
+
+Use Python 3.11 or 3.12 in a virtual environment:
+
+```bash
+python -m pip install "notanda-mcp==0.1.0b1"
+```
+
+For a client that uses uvx, configure this command and arguments (replace the
+evidence directory with a writable absolute path on your computer):
+
+```text
+uvx --python 3.12 notanda-mcp@0.1.0b1 --evidence-dir ABSOLUTE_LOCAL_EVIDENCE_PATH
+```
+
+Set `HARVESTER_OPENALEX_API_KEY` in the MCP client's local environment. The key is
+required for searches and must not be placed in the command arguments. The registry
+manifest declares this variable as secret and the evidence path as a required input.
 
 ## Install from this repository
 

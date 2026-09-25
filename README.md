@@ -81,11 +81,15 @@ and persists the request, provider observation, exact returned result and SHA-25
 manifest under one stable evidence ID. It performs no full-text download or corpus
 write and opens no network server.
 
-The MCP component uses the reviewed `notanda==1.3.1` PyPI release as its core and is
-installed separately from this checkout. It remains experimental and is not included
-in the PyPI 1.3.1 distribution. Five of six acceptance criteria are technically
-satisfied; the external unaccompanied developer test is still pending. Installation,
-client configuration, evidence format and verification steps are documented in the
+The separate `notanda-mcp` Beta package uses the reviewed `notanda==1.3.1` PyPI
+release as its core. With Python 3.11 or 3.12, install it using
+`python -m pip install "notanda-mcp==0.1.0b1"` once the Beta is published to PyPI.
+The [MCP Registry manifest](mcp/server.json) declares the package, local stdio
+transport, required OpenAlex API key and writable evidence directory; a public
+Registry listing depends on a separate submission. The package is not included in
+the `notanda` 1.3.1 distribution. Five of six acceptance criteria are technically
+satisfied; the external unaccompanied developer test is still pending. Client
+configuration, evidence format and verification steps are in
 [`mcp/README.md`](mcp/README.md).
 
 ### From the command line
@@ -168,6 +172,10 @@ state in separate blocks. Missing information is `null`; nothing is ever invente
 | `evidence-export` | write a deterministic, independently readable ledger JSON bundle (`--output`) |
 | `evidence-restore` | validate and restore a bundle into an empty ledger (`--input`) |
 
+The evidence bundle contains Ledger records and file references, not the PDF/XML
+artifacts or the complete corpus directory. A portable corpus export with files is
+still in development.
+
 Exit codes: `0` success · `1` failure · `2` configuration error · `3` completed with
 document failures · `4` suspended (provider budget) · `130` interrupted.
 
@@ -195,13 +203,7 @@ missing full text, alternative locations and duplicates.
 
 ## Code signing policy
 
-**Free code signing provided by SignPath.io, certificate by SignPath Foundation.**
-
-Windows release signing is intended to use SignPath Foundation's free Open Source path.
-Every production signing request requires explicit manual approval by the maintainer.
-The complete policy is documented in [`CODE_SIGNING_POLICY.md`](CODE_SIGNING_POLICY.md).
-No current unsigned Installer Preview should be interpreted as already signed or approved
-by SignPath Foundation.
+Windows installers are currently unsigned.
 
 ## Dependencies
 

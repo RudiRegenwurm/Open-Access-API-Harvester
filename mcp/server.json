@@ -1,0 +1,50 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.RudiRegenwurm/notanda",
+  "title": "Notanda (Beta)",
+  "description": "Beta: OpenAlex literature search and local evidence retrieval. External acceptance test pending.",
+  "version": "0.1.0-beta.1",
+  "repository": {
+    "url": "https://github.com/RudiRegenwurm/Open-Access-API-Harvester",
+    "source": "github",
+    "subfolder": "mcp"
+  },
+  "websiteUrl": "https://notanda.io",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "notanda-mcp",
+      "version": "0.1.0b1",
+      "runtimeHint": "uvx",
+      "runtimeArguments": [
+        {"type": "named", "name": "--python", "value": "3.12"}
+      ],
+      "transport": {"type": "stdio"},
+      "packageArguments": [
+        {
+          "type": "named",
+          "name": "--evidence-dir",
+          "description": "Writable absolute local directory for persistent evidence files.",
+          "isRequired": true,
+          "format": "filepath"
+        }
+      ],
+      "environmentVariables": [
+        {
+          "name": "HARVESTER_OPENALEX_API_KEY",
+          "description": "OpenAlex API key used for literature searches.",
+          "isRequired": true,
+          "isSecret": true,
+          "format": "string"
+        }
+      ]
+    }
+  ],
+  "_meta": {
+    "io.modelcontextprotocol.registry/publisher-provided": {
+      "developmentStatus": "beta",
+      "externalAcceptanceTest": "Pending: Thomas's unassisted installation and usage test."
+    }
+  }
+}

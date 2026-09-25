@@ -44,7 +44,7 @@
   "_meta": {
     "io.modelcontextprotocol.registry/publisher-provided": {
       "developmentStatus": "beta",
-      "externalAcceptanceTest": "Pending: Thomas's unassisted installation and usage test."
+      "externalAcceptanceTest": "Pending: an external developer's unassisted installation and usage test."
     }
   }
 }

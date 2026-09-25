@@ -83,10 +83,10 @@ write and opens no network server.
 
 The separate `notanda-mcp` Beta package uses the reviewed `notanda==1.3.1` PyPI
 release as its core. With Python 3.11 or 3.12, install it using
-`python -m pip install "notanda-mcp==0.1.0b1"` once the Beta is published to PyPI.
-The [MCP Registry manifest](mcp/server.json) declares the package, local stdio
-transport, required OpenAlex API key and writable evidence directory; a public
-Registry listing depends on a separate submission. The package is not included in
+`python -m pip install "notanda-mcp==0.1.0b1"`.
+The [MCP Registry entry](https://registry.modelcontextprotocol.io/?q=io.github.RudiRegenwurm%2Fnotanda)
+describes the package, local stdio transport, required OpenAlex API key and writable
+evidence directory. The package is not included in
 the `notanda` 1.3.1 distribution. Five of six acceptance criteria are technically
 satisfied; the external unaccompanied developer test is still pending. Client
 configuration, evidence format and verification steps are in

@@ -2,7 +2,7 @@
 
 <!-- mcp-name: io.github.RudiRegenwurm/notanda -->
 
-**Beta: the external, unassisted acceptance test by Thomas is still pending.**
+**Beta: an external developer's unassisted acceptance test is still pending.**
 Technical tests do not replace that external usability and installation check.
 
 This directory exposes Notanda's provenance-aware OpenAlex retrieval to local MCP

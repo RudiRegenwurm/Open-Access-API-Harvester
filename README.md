@@ -4,7 +4,7 @@
 package and CLI keep their established technical names
 `Open-Access-API-Harvester`, `harvester` and `harvester`.
 
-This repository publishes the reviewed 1.3.1 product-core source. It is not a hosted
+This repository publishes the reviewed 1.3.2 product-core source. It is not a hosted
 service and the recommended accompanied beta path remains `beta@notanda.io`.
 
 A public **Installer Preview** is available under GitHub Releases solely as a
@@ -87,8 +87,8 @@ release as its core. With Python 3.11 or 3.12, install it using
 The [MCP Registry entry](https://registry.modelcontextprotocol.io/?q=io.github.RudiRegenwurm%2Fnotanda)
 describes the package, local stdio transport, required OpenAlex API key and writable
 evidence directory. The package is not included in
-the `notanda` 1.3.1 distribution. Five of six acceptance criteria are technically
-satisfied; the external unaccompanied developer test is still pending. Client
+the `notanda` 1.3.2 distribution. The technical live search and restart/receipt
+checks passed on 2026-10-02; Thomas's external unaccompanied test is still pending. Client
 configuration, evidence format and verification steps are in
 [`mcp/README.md`](mcp/README.md).
 

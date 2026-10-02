@@ -1,79 +1,103 @@
-name: Publish Notanda to PyPI
+name: Publish approved Notanda 1.3.2
 
 on:
-  release:
-    types: [published]
+  push:
+    branches: [release/approved-notanda-1.3.2]
 
 permissions:
   contents: read
 
 concurrency:
-  group: pypi-${{ github.event.release.tag_name }}
+  group: pypi-v1.3.2
   cancel-in-progress: false
 
 jobs:
   build:
-    name: Build and test distributions
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Check out the release tag
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.release.tag_name }}
+          ref: 76b8cd6f26be67fc35c9b0515a54f6bee9214f8c
           persist-credentials: false
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-      - name: Check distribution name and release version
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          python-version: '3.12'
+      - name: Check approved source version
         run: |
           python - <<'PY'
-          import os
           import tomllib
           from pathlib import Path
-
-          project = tomllib.loads(Path("pyproject.toml").read_text())["project"]
-          assert project["name"] == "notanda", project["name"]
-          assert os.environ["RELEASE_TAG"] == f"v{project['version']}", (
-              "Release tag must equal v plus the pyproject.toml version"
-          )
+          project = tomllib.loads(Path('pyproject.toml').read_text())['project']
+          assert project['name'] == 'notanda' and project['version'] == '1.3.2'
           PY
-      - name: Build wheel and source distribution
+      - name: Build and test distributions
         run: |
-          python -m pip install --upgrade build twine
+          python -m pip install build twine pytest
           python -m build
           python -m twine check --strict dist/*
-      - name: Test the built wheel
-        run: |
-          python -m pip install dist/*.whl pytest
+          python -m pip install dist/*.whl
           python -m pip check
           python -m pytest -q
           harvester --version
-      - name: Store verified distributions
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: notanda-distributions
           path: dist/*
           if-no-files-found: error
 
   publish:
-    name: Publish via PyPI Trusted Publishing
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:
       name: notanda_env
-      url: https://pypi.org/project/notanda/
+      url: https://pypi.org/project/notanda/1.3.2/
     permissions:
       id-token: write
     steps:
-      - name: Download verified distributions
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: notanda-distributions
           path: dist/
-      - name: Publish package distributions to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true
+
+  github-release:
+    needs: publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Create approved release at the tested main commit
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tag = 'v1.3.2';
+            try {
+              const existing = await github.rest.repos.getReleaseByTag({...context.repo, tag});
+              core.info(existing.data.html_url);
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              const result = await github.rest.repos.createRelease({
+                ...context.repo,
+                tag_name: tag,
+                target_commitish: '76b8cd6f26be67fc35c9b0515a54f6bee9214f8c',
+                name: 'Notanda 1.3.2 — OpenAlex content fallback',
+                draft: false,
+                prerelease: false,
+                make_latest: 'true',
+                body: `Notanda 1.3.2 adds authenticated OpenAlex content_urls as a fallback after unsuccessful publisher/direct acquisition, supporting PDF and GROBID-XML. It reuses HARVESTER_OPENALEX_API_KEY without persisting the key, counts content downloads in shared credit tracking, and records complete redacted request URLs in the Evidence Ledger.
+
+            Validation: 749 offline tests passed locally against the built release (8 live tests deselected). The publishing workflow repeats the suite on Linux. Live W2158993832 acceptance observed Wiley HTTP 403 followed by OpenAlex PDF and XML HTTP 200, with real headers reporting 100 credits / $0.01 per content download. Provenance hashes and database/export/application-log secret checks passed.
+
+            Source commits: 55bc909bc69a775e5064383a56b0b916e5964251 (content fallback) and 0d967d5dac81194d88d9a7bb72e6ae530aade030 (MCP hardening). Final feature merge: 4771ddd3f229711464614bab6427f1dc4548d6e7. Release commit: 76b8cd6f26be67fc35c9b0515a54f6bee9214f8c.
+
+            The separately distributed notanda-mcp 0.1.0b2 remains Beta. Its live search, server restart and get_evidence receipt checks passed; Thomas's independent external test is still pending. MCP retains its tested notanda==1.3.1 dependency and is installed separately.
+
+            Install: python -m pip install notanda==1.3.2`
+              });
+              core.info(result.data.html_url);
+            }

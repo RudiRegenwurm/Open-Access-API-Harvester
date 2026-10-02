@@ -51,6 +51,7 @@ from .models import (
     SourceRecord,
 )
 from .providers import EuropePmcAdapter, OpenAlexAdapter, OpenAlexQuery, UnpaywallAdapter
+from .providers.openalex import is_content_url
 from .reporting import RunStats, StatsCollector, write_report
 from .state import StateStore
 from .storage import SidecarInputs, build_sidecar, write_sidecar
@@ -226,7 +227,7 @@ class Harvester:
         self.unpaywall = UnpaywallAdapter(
             clients.unpaywall, config.unpaywall, contact_email=config.contact_email
         )
-        self.acquirer = Acquirer(config, clients.downloads)
+        self.acquirer = Acquirer(config, clients.downloads, content_client=clients.openalex)
         self._worker_prefix = worker_prefix or f"worker-{uuid.uuid4().hex[:8]}"
         self._suspension: BudgetExhaustedError | None = None
         self._suspension_lock = threading.Lock()
@@ -358,7 +359,10 @@ class Harvester:
                 run_id=run_id,
                 provider=Source.OPENALEX.value,
                 operation="discover",
-                request={"query": query.to_dict(), "cursor": cursor},
+                request={
+                    "query": query.to_dict(), "cursor": cursor,
+                    "request_url": self.openalex.discovery_request_url(query, cursor),
+                },
             )
             try:
                 page = self.openalex.discover_page(query, cursor=cursor)
@@ -554,6 +558,9 @@ class Harvester:
             candidates.extend(cross_candidates)
             metadata = self.store.get_metadata(document_id)
 
+        content = [c for c in candidates if is_content_url(c.url)]
+        candidates = [c for c in candidates if not is_content_url(c.url)]
+
         pdf_error: HarvesterError | None = None
         tried_urls: set[str] = set()
         if ArtifactKind.PDF.value not in artifacts:
@@ -570,6 +577,7 @@ class Harvester:
             and self.config.unpaywall.enabled
         ):
             fallback = self._unpaywall_candidates(run_id, document_id, canonical_doi, collector)
+            fallback = [c for c in fallback if not is_content_url(c.url)]
             if fallback:
                 metadata = self.store.get_metadata(document_id)
                 record, fallback_error = self._acquire_pdf(
@@ -581,8 +589,22 @@ class Harvester:
                 elif fallback_error is not None:
                     pdf_error = fallback_error
 
+        # Cached content is consulted only after ordinary OA locations failed.
+        if (
+            self.config.openalex.api_key and ArtifactKind.PDF.value not in artifacts
+            and any(c.kind is ArtifactKind.PDF for c in content)
+        ):
+            record, content_error = self._acquire_pdf(run_id, document_id, content, collector)
+            if record is not None:
+                artifacts[ArtifactKind.PDF.value] = record
+                pdf_error = None
+            elif content_error is not None:
+                pdf_error = content_error
+
         if self.config.xml_policy != "disabled" and ArtifactKind.XML.value not in artifacts:
             record = self._acquire_xml(run_id, document_id, candidates, collector)
+            if record is None and self.config.openalex.api_key and content:
+                record = self._acquire_xml(run_id, document_id, content, collector)
             if record is not None:
                 artifacts[ArtifactKind.XML.value] = record
 
@@ -629,7 +651,10 @@ class Harvester:
                     run_id=run_id,
                     provider=candidate.source.value,
                     operation="acquire.pdf",
-                    request=_candidate_request(candidate, document_id, index, len(ordered)),
+                    request={
+                        **_candidate_request(candidate, document_id, index, len(ordered)),
+                        "request_url": self.acquirer.request_url(candidate),
+                    },
                 ) as ledger:
                     outcome = self.acquirer.acquire(
                         document_id=document_id,
@@ -695,7 +720,10 @@ class Harvester:
                     run_id=run_id,
                     provider=candidate.source.value,
                     operation="acquire.xml",
-                    request=_candidate_request(candidate, document_id, index, len(ordered)),
+                    request={
+                        **_candidate_request(candidate, document_id, index, len(ordered)),
+                        "request_url": self.acquirer.request_url(candidate),
+                    },
                 ) as ledger:
                     outcome = self.acquirer.acquire(
                         document_id=document_id,

@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-02",
+  "api_key_configured": false,
+  "metadata_status": 200,
+  "work": {
+    "id": "https://openalex.org/W2158993832",
+    "doi": "https://doi.org/10.1029/2001rg000106",
+    "content_urls": {
+      "pdf": "https://content.openalex.org/works/W2158993832.pdf",
+      "grobid_xml": "https://content.openalex.org/works/W2158993832.grobid-xml"
+    }
+  },
+  "downloads": {
+    "pdf": {
+      "http_status": 401,
+      "content_type": "application/json"
+    },
+    "grobid_xml": {
+      "http_status": 401,
+      "content_type": "application/json"
+    }
+  },
+  "acceptance": "BLOCKED: authenticated downloads and MCP live search require configured HARVESTER_OPENALEX_API_KEY"
+}

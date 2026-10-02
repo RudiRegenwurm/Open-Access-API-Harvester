@@ -26,7 +26,7 @@ import time
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from typing import Any
-from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+from urllib.parse import parse_qsl, quote, quote_plus, urlencode, urlsplit, urlunsplit
 
 import httpx
 
@@ -283,7 +283,7 @@ class ProviderClient:
                 ) from exc
             except httpx.HTTPError as exc:
                 raise NetworkError(
-                    f"{self.name}: {type(exc).__name__}: {exc}", url=redact_url(url)
+                    f"{self.name}: {type(exc).__name__}", url=redact_url(url)
                 ) from exc
         self._observe_budget(response)
         self._raise_for_status(response)
@@ -297,6 +297,11 @@ class ProviderClient:
             return
         url = redact_url(str(response.request.url))
         snippet = _body_snippet(response)
+        # Error bodies can echo the authenticated URL; keep credentials out of errors.
+        for key, value in response.request.url.params.multi_items():
+            if key.lower() in SECRET_QUERY_PARAMS and value:
+                for form in (value, quote(value, safe=""), quote_plus(value)):
+                    snippet = snippet.replace(form, "REDACTED")
 
         if status in (429, 409, 402, 403):
             exhausted = self._budget_exhaustion(response, snippet)
@@ -490,7 +495,7 @@ class _StreamContext:
         except httpx.HTTPError as exc:
             self._release()
             raise NetworkError(
-                f"{self._client.name}: {type(exc).__name__}: {exc}", url=redact_url(self._url)
+                f"{self._client.name}: {type(exc).__name__}", url=redact_url(self._url)
             ) from exc
         try:
             self._client._observe_budget(response)
@@ -629,6 +634,9 @@ def _openalex_credit_cost(response: httpx.Response) -> int | None:
     reported = coerce_int(response.headers.get("x-ratelimit-credits-used"))
     if reported is not None:
         return reported
+    if response.request.url.host == "content.openalex.org":
+        # Content downloads cost 100 credits; share the discovery budget/ceiling.
+        return 100 if response.status_code < 400 else 0
     path = response.request.url.path.rstrip("/")
     segments = [segment for segment in path.split("/") if segment]
     return 1 if len(segments) >= 2 else 10

@@ -20,9 +20,12 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
+import httpx
+
 from .config import Config
 from .errors import (
     BudgetExhaustedError,
+    ConfigurationError,
     DownloadError,
     HarvesterError,
     SizeLimitExceededError,
@@ -31,6 +34,7 @@ from .errors import (
 from .http import ProviderClient, redact_url
 from .identity import artifact_path, validate_remote_url
 from .models import ArtifactKind, ArtifactRecord, FulltextCandidate
+from .providers.openalex import is_content_url
 from .util import coerce_int, utc_now_iso
 from .validation import ValidationResult, content_type_is_plausible, validate_pdf, validate_xml
 
@@ -51,9 +55,13 @@ class AcquisitionOutcome:
 class Acquirer:
     """Downloads and publishes one artifact at a time."""
 
-    def __init__(self, config: Config, client: ProviderClient) -> None:
+    def __init__(
+        self, config: Config, client: ProviderClient,
+        *, content_client: ProviderClient | None = None,
+    ) -> None:
         self._config = config
         self._client = client
+        self._content_client = content_client
         self._storage_root = Path(config.storage_root)
 
     def acquire(
@@ -131,7 +139,8 @@ class Acquirer:
 
     def _download(self, url: str, part_path: Path) -> tuple[str, int, str | None, int]:
         limit = self._config.downloads.max_download_size_bytes
-        with self._client.stream("GET", url) as response:
+        client, params = self._request_options(url)
+        with client.stream("GET", url, params=params) as response:
             status = response.status_code
             content_type = response.headers.get("content-type")
             resolved_url = str(response.url)
@@ -174,7 +183,7 @@ class Acquirer:
                 ) from exc
             except Exception as exc:  # transport failure part-way through the stream
                 raise DownloadError(
-                    f"download interrupted after {written} bytes: {exc}",
+                    f"download interrupted after {written} bytes ({type(exc).__name__})",
                     http_status=status,
                     url=redact_url(url),
                 ) from exc
@@ -184,6 +193,19 @@ class Acquirer:
                 "server returned an empty body", http_status=status, url=redact_url(url)
             )
         return resolved_url, status, content_type, written
+
+    def _request_options(
+        self, url: str
+    ) -> tuple[ProviderClient, dict[str, str] | None]:
+        if is_content_url(url):
+            if not self._config.openalex.api_key or self._content_client is None:
+                raise ConfigurationError("OpenAlex content requires an API key and its budget client")
+            return self._content_client, {"api_key": self._config.openalex.api_key}
+        return self._client, None
+
+    def request_url(self, candidate: FulltextCandidate) -> str:
+        _, params = self._request_options(candidate.url)
+        return redact_url(str(httpx.Request("GET", candidate.url, params=params).url))
 
     def _validate(self, kind: ArtifactKind, path: Path) -> ValidationResult:
         if kind is ArtifactKind.PDF:

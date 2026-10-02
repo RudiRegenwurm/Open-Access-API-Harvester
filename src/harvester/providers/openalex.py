@@ -17,9 +17,13 @@ what this module relies on:
 from __future__ import annotations
 
 import logging
+import re
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 from typing import Any
+from urllib.parse import urlsplit
+
+import httpx
 
 from ..config import OpenAlexConfig
 from ..errors import ConfigurationError, InvalidMetadataError, ProviderError
@@ -53,7 +57,7 @@ AFFILIATION_COUNTRY_FILTER = "authorships.institutions.country_code"
 WORK_FIELDS = (
     "id,doi,title,display_name,publication_year,authorships,primary_location,"
     "best_oa_location,locations,open_access,abstract_inverted_index,primary_topic,"
-    "topics,ids,type,language"
+    "topics,ids,type,language,content_urls"
 )
 
 
@@ -198,8 +202,8 @@ class OpenAlexAdapter:
 
     # ------------------------------------------------------------------ discovery
 
-    def discover_page(self, query: OpenAlexQuery, cursor: str = "*") -> DiscoveryPage:
-        """Fetch one page of works."""
+    def discovery_request(self, query: OpenAlexQuery, cursor: str = "*") -> tuple[str, dict[str, Any]]:
+        """Single source for the actual request and its redacted ledger URL."""
         params: dict[str, Any] = {
             "filter": query.filter_string(),
             "per-page": self._config.per_page,
@@ -212,6 +216,15 @@ class OpenAlexAdapter:
             params["api_key"] = self._config.api_key
 
         url = f"{self._config.base_url.rstrip('/')}/works"
+        return url, params
+
+    def discovery_request_url(self, query: OpenAlexQuery, cursor: str = "*") -> str:
+        url, params = self.discovery_request(query, cursor)
+        return redact_url(str(httpx.Request("GET", url, params=params).url))
+
+    def discover_page(self, query: OpenAlexQuery, cursor: str = "*") -> DiscoveryPage:
+        """Fetch one page of works."""
+        url, params = self.discovery_request(query, cursor)
         response = self._client.request("GET", url, params=params, operation="openalex.discover")
         payload = _json_body(response, url)
 
@@ -297,6 +310,8 @@ class OpenAlexAdapter:
         domain_tags = _domain_tags(topics)
         identifiers = _identifiers(work, openalex_id, doi)
         candidates, landing_pages = _locations(work)
+        if self._config.api_key:
+            candidates.extend(content_candidates(work, openalex_id))
 
         document_id = (
             document_id_for_doi(doi)
@@ -568,3 +583,33 @@ def _string_or_none(value: Any) -> str | None:
     if isinstance(value, str) and value.strip():
         return value.strip()
     return None
+
+
+def is_content_url(url: str) -> bool:
+    """Credential boundary: only exact HTTPS OpenAlex content endpoints qualify."""
+    try:
+        parts = urlsplit(url)
+        return (
+            parts.scheme == "https" and parts.netloc == "content.openalex.org"
+            and not parts.query and not parts.fragment
+            and re.fullmatch(r"/works/W[0-9]+\.(pdf|grobid-xml)", parts.path) is not None
+        )
+    except ValueError:
+        return False
+
+
+def content_candidates(work: dict[str, Any], work_id: str) -> list[FulltextCandidate]:
+    """Use only supplied, identity-matched URLs; never synthesize a download URL."""
+    result: list[FulltextCandidate] = []
+    urls = _as_dict(work.get("content_urls"))
+    for key, kind, suffix in (
+        ("pdf", ArtifactKind.PDF, "pdf"),
+        ("grobid_xml", ArtifactKind.XML, "grobid-xml"),
+    ):
+        url = urls.get(key)
+        if (
+            isinstance(url, str) and is_content_url(url)
+            and urlsplit(url).path == f"/works/{work_id}.{suffix}"
+        ):
+            result.append(FulltextCandidate(url=url, kind=kind, source=Source.OPENALEX))
+    return result

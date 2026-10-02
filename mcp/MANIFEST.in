@@ -1,2 +1,3 @@
 include server.json
 include SOURCE_PROVENANCE.json
+include CHANGELOG.md

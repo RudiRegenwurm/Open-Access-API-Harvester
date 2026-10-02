@@ -34,19 +34,26 @@ if __name__ == "__main__":
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--query")
     group.add_argument("--id")
+    parser.add_argument("--receipt")
     parser.add_argument("--limit", type=int, default=5)
     args = parser.parse_args()
     tool = "get_evidence" if args.id else "search_literature"
-    arguments = (
-        {"evidence_id": args.id}
-        if args.id
-        else {"query": args.query, "limit": args.limit}
-    )
+    if args.id:
+        arguments = {"evidence_id": args.id}
+        if args.receipt is not None:
+            arguments["receipt"] = args.receipt
+    else:
+        arguments = {"query": args.query, "limit": args.limit}
     output = asyncio.run(call(args.evidence_dir, tool, arguments))
     if args.query and output.get("status") == "ok":
         persisted = json.loads(
             (args.evidence_dir / output["evidence_id"] / "response.json").read_bytes()
         )
-        assert output == persisted, "Received result differs from saved response"
+        returned_without_receipt = {
+            key: value for key, value in output.items() if key != "receipt"
+        }
+        assert returned_without_receipt == persisted, (
+            "Received result differs from saved response"
+        )
     print(json.dumps(output, ensure_ascii=True, indent=2))
     sys.exit(0 if output.get("status") == "ok" else 1)

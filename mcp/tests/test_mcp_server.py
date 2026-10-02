@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -9,7 +10,12 @@ import httpx
 import pytest
 
 from harvester.config import Config
-from notanda_mcp.server import EvidenceStore, Experiment
+from notanda_mcp.server import (
+    UNTRUSTED_CONTENT_NOTICE,
+    EvidenceStore,
+    Experiment,
+    encode,
+)
 
 
 def make(tmp_path, handler):
@@ -38,15 +44,31 @@ def test_success_restart_and_corruption(tmp_path):
 
     result = make(tmp_path, handler).search("science", 2)
     assert result["status"] == "ok", result
+    assert result["content_notice"] == UNTRUSTED_CONTENT_NOTICE
     assert len(result["results"]) == 1
     assert len(calls) == 1
     folder = tmp_path / result["evidence_id"]
+    receipt = hashlib.sha256((folder / "manifest.json").read_bytes()).hexdigest()
+    assert result["receipt"] == receipt
     request = json.loads((folder / "request.json").read_bytes())
     assert request["source_experiment_commit"] == (
         "366bc2d4827aa915e2e58a82cd567163ed63d4be"
     )
     assert request["notanda_core_version"] == "1.3.1"
-    assert EvidenceStore(tmp_path).get(result["evidence_id"]) == result
+    persisted = json.loads((folder / "response.json").read_bytes())
+    assert "receipt" not in persisted
+    assert EvidenceStore(tmp_path).get(result["evidence_id"]) == persisted
+    assert EvidenceStore(tmp_path).get(result["evidence_id"], receipt) == result
+    assert EvidenceStore(tmp_path).get(result["evidence_id"], "0" * 64) == {
+        "status": "error",
+        "error": "receipt_mismatch",
+        "evidence_id": result["evidence_id"],
+    }
+    assert EvidenceStore(tmp_path).get(result["evidence_id"], "falsch-ü") == {
+        "status": "error",
+        "error": "receipt_mismatch",
+        "evidence_id": result["evidence_id"],
+    }
     assert "test-secret-never-persist" not in "".join(
         path.read_text() for path in folder.glob("*.json")
     )
@@ -58,7 +80,15 @@ def test_success_restart_and_corruption(tmp_path):
 
 @pytest.mark.parametrize(
     "query,limit",
-    [("", 1), ("x", 0), ("x", 11), ("x", True), (None, 5), ("x", "5")],
+    [
+        ("", 1),
+        ("x" * 1001, 1),
+        ("x", 0),
+        ("x", 11),
+        ("x", True),
+        (None, 5),
+        ("x", "5"),
+    ],
 )
 def test_invalid_persisted_without_provider(tmp_path, query, limit):
     def forbidden(request):
@@ -67,7 +97,8 @@ def test_invalid_persisted_without_provider(tmp_path, query, limit):
     experiment = make(tmp_path, forbidden)
     result = experiment.search(query, limit)
     assert result["error"] == "invalid_arguments"
-    assert experiment.store.get(result["evidence_id"]) == result
+    stored = experiment.store.get(result["evidence_id"])
+    assert {**stored, "receipt": result["receipt"]} == result
 
 
 @pytest.mark.parametrize("status", [401, 429, 500])
@@ -82,7 +113,8 @@ def test_provider_error_once_and_redaction(tmp_path, status):
     result = experiment.search("science")
     assert result["error"] == "provider_error"
     assert len(calls) == 1
-    assert experiment.store.get(result["evidence_id"]) == result
+    stored = experiment.store.get(result["evidence_id"])
+    assert {**stored, "receipt": result["receipt"]} == result
     assert "test-secret-never-persist" not in "".join(
         path.read_text() for path in tmp_path.rglob("*.json")
     )
@@ -186,6 +218,37 @@ def test_independent_verifier_detects_tampering(tmp_path):
     )
 
 
+def test_receipt_detects_coordinated_payload_and_manifest_replacement(tmp_path):
+    result = make(
+        tmp_path,
+        lambda request: httpx.Response(
+            200, json={"results": [work()], "meta": {"count": 1}}
+        ),
+    ).search("x")
+    folder = tmp_path / result["evidence_id"]
+    response_path = folder / "response.json"
+    response = json.loads(response_path.read_bytes())
+    response["results"][0]["title"] = "Coordinated replacement"
+    response_path.write_bytes(encode(response))
+
+    manifest_path = folder / "manifest.json"
+    manifest = json.loads(manifest_path.read_bytes())
+    raw = response_path.read_bytes()
+    manifest["files"]["response.json"] = {
+        "sha256": hashlib.sha256(raw).hexdigest(),
+        "bytes": len(raw),
+    }
+    manifest_path.write_bytes(encode(manifest))
+
+    store = EvidenceStore(tmp_path)
+    assert store.get(result["evidence_id"])["results"][0]["title"] == (
+        "Coordinated replacement"
+    )
+    assert store.get(result["evidence_id"], result["receipt"])["error"] == (
+        "receipt_mismatch"
+    )
+
+
 def test_process_death_is_incomplete(tmp_path):
     script = """
 import os,sys,httpx
@@ -208,6 +271,7 @@ def test_stdio_real_client_two_processes(tmp_path):
     pytest.importorskip("mcp")
     from mcp import ClientSession, StdioServerParameters
     from mcp.client.stdio import stdio_client
+    from mcp.types import Implementation
 
     # Dependency injection is confined to this test launcher, never a production switch.
     script = """
@@ -222,7 +286,7 @@ m.Experiment=Fixture
 m.main()
 """
 
-    async def call(arguments, tool, fixture):
+    async def call(arguments, tool, fixture, expect_protocol_error=False):
         parameters = StdioServerParameters(
             command=sys.executable,
             args=(
@@ -236,25 +300,67 @@ m.main()
             },
         )
         async with stdio_client(parameters) as (read, write):
-            async with ClientSession(read, write) as session:
+            async with ClientSession(
+                read,
+                write,
+                client_info=Implementation(name="notanda-test-client", version="9.8.7"),
+            ) as session:
                 await session.initialize()
-                assert {item.name for item in (await session.list_tools()).tools} == {
+                tools = {item.name: item for item in (await session.list_tools()).tools}
+                assert set(tools) == {
                     "get_evidence",
                     "search_literature",
                 }
+                search_schema = tools["search_literature"].inputSchema
+                assert search_schema["properties"]["query"] == {
+                    "maxLength": 1000,
+                    "title": "Query",
+                    "type": "string",
+                }
+                assert search_schema["properties"]["limit"]["type"] == "integer"
+                assert search_schema["properties"]["limit"]["minimum"] == 1
+                assert search_schema["properties"]["limit"]["maximum"] == 10
+                assert "query" in search_schema["required"]
+                for item in tools.values():
+                    assert UNTRUSTED_CONTENT_NOTICE in item.description
                 result = await session.call_tool(tool, arguments)
-                assert not result.isError, result
+                assert result.isError is expect_protocol_error, result
                 return result.structuredContent
 
     first = asyncio.run(call({"query": "fixture"}, "search_literature", True))
     assert first["status"] == "ok"
+    assert first["content_notice"] == UNTRUSTED_CONTENT_NOTICE
+    request = json.loads(
+        (tmp_path / first["evidence_id"] / "request.json").read_bytes()
+    )
+    assert request["client"] == {"name": "notanda-test-client", "version": "9.8.7"}
     second = asyncio.run(
+        call(
+            {"evidence_id": first["evidence_id"], "receipt": first["receipt"]},
+            "get_evidence",
+            False,
+        )
+    )
+    assert first == second
+    without_receipt = asyncio.run(
         call({"evidence_id": first["evidence_id"]}, "get_evidence", False)
     )
-    assert first == second == json.loads(
+    assert without_receipt == json.loads(
         (tmp_path / first["evidence_id"] / "response.json").read_bytes()
     )
-    invalid = asyncio.run(
-        call({"query": "fixture", "limit": 11}, "search_literature", True)
+    mismatch = asyncio.run(
+        call(
+            {"evidence_id": first["evidence_id"], "receipt": "0" * 64},
+            "get_evidence",
+            False,
+        )
     )
-    assert invalid["error"] == "invalid_arguments"
+    assert mismatch["error"] == "receipt_mismatch"
+    asyncio.run(
+        call(
+            {"query": "fixture", "limit": 11},
+            "search_literature",
+            True,
+            expect_protocol_error=True,
+        )
+    )

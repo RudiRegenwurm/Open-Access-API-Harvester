@@ -2,8 +2,8 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.RudiRegenwurm/notanda",
   "title": "Notanda (Beta)",
-  "description": "Beta: OpenAlex literature search and local evidence retrieval. External acceptance test pending.",
-  "version": "0.1.0-beta.1",
+  "description": "Every OpenAlex search stores its request, response and checksums so sources can be checked later.",
+  "version": "0.1.0-beta.2",
   "repository": {
     "url": "https://github.com/RudiRegenwurm/Open-Access-API-Harvester",
     "source": "github",
@@ -15,7 +15,7 @@
       "registryType": "pypi",
       "registryBaseUrl": "https://pypi.org",
       "identifier": "notanda-mcp",
-      "version": "0.1.0b1",
+      "version": "0.1.0b2",
       "runtimeHint": "uvx",
       "runtimeArguments": [
         {"type": "named", "name": "--python", "value": "3.12"}

@@ -22,11 +22,14 @@
       "renamed the server module from harvester.mcp_experiment to notanda_mcp.server",
       "added installed core version and source experiment commit to every request record",
       "adapted client, tests and documentation to the public repository layout",
-      "retained the two-tool scope and original evidence contract"
+      "retained the two-tool scope while extending the evidence contract with caller-held manifest receipts",
+      "constrained the published tool schema while retaining server-side argument validation",
+      "recorded only the initialized MCP client name and version in each request",
+      "marked returned titles and metadata as unverified third-party content"
     ]
   },
   "acceptance": {
-    "deterministic_mcp_tests": "20 passed",
+    "deterministic_mcp_tests": "23 passed",
     "full_product_regression": "732 passed, 1 skipped, 8 deselected",
     "standalone_install_against_pypi_notanda_1_3_1": "passed",
     "external_unaccompanied_developer_test": "pending"

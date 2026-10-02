@@ -15,8 +15,17 @@ def test_installed_beta_package_matches_registry_and_ownership_marker():
     assert Version(manifest["version"]) == Version(package.version)
     assert "Development Status :: 4 - Beta" in package.metadata.get_all("Classifier")
     assert "mcp-name: " + manifest["name"] in package.metadata.get_payload()
-    assert "Thomas" in package.metadata.get_payload()
-    assert "pending" in manifest["description"].lower()
+    assert "Thomas" not in package.metadata.get_payload()
+    assert "an external developer" in package.metadata.get_payload()
+    differentiator = (
+        "Every OpenAlex search stores its request, response and checksums so "
+        "sources can be checked later."
+    )
+    assert package.metadata["Summary"] == differentiator
+    assert manifest["description"] == differentiator
+    assert "pending" in manifest["_meta"][
+        "io.modelcontextprotocol.registry/publisher-provided"
+    ]["externalAcceptanceTest"].lower()
     assert pypi["transport"]["type"] == "stdio"
     assert {e.name for e in package.entry_points if e.group == "console_scripts"} == {"notanda-mcp"}
     assert pypi["packageArguments"][0]["name"] == "--evidence-dir"

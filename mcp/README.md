@@ -2,6 +2,9 @@
 
 <!-- mcp-name: io.github.RudiRegenwurm/notanda -->
 
+**Every OpenAlex search stores its request, response and checksums so sources can
+be checked later.**
+
 **Beta: an external developer's unassisted acceptance test is still pending.**
 Technical tests do not replace that external usability and installation check.
 
@@ -12,9 +15,14 @@ part of the `notanda` 1.3.1 package. It depends on that released core.
 The component provides exactly two tools:
 
 - `search_literature`: search OpenAlex for OA works with a DOI and persist the
-  request, provider observation, returned result and hashes under one evidence ID.
+  request, provider observation, returned result and hashes under one evidence ID;
+  the returned `receipt` is the SHA-256 of `manifest.json`.
 - `get_evidence`: verify those hashes and return the original result by evidence ID
-  without repeating the provider request.
+  without repeating the provider request. An optional caller-held `receipt` also
+  detects replacement of the payloads together with their manifest.
+
+Both tool descriptions and every successful response warn that titles and metadata
+are unverified third-party content, not instructions.
 
 It does not download full text, write to the Notanda corpus or Evidence Ledger,
 modify the web UI, expose a network server, or provide general agent reasoning.
@@ -39,14 +47,14 @@ verified** until that result is returned.
 Use Python 3.11 or 3.12 in a virtual environment:
 
 ```bash
-python -m pip install "notanda-mcp==0.1.0b1"
+python -m pip install "notanda-mcp==0.1.0b2"
 ```
 
 For a client that uses uvx, configure this command and arguments (replace the
 evidence directory with a writable absolute path on your computer):
 
 ```text
-uvx --python 3.12 notanda-mcp@0.1.0b1 --evidence-dir ABSOLUTE_LOCAL_EVIDENCE_PATH
+uvx --python 3.12 notanda-mcp@0.1.0b2 --evidence-dir ABSOLUTE_LOCAL_EVIDENCE_PATH
 ```
 
 Set `HARVESTER_OPENALEX_API_KEY` in the MCP client's local environment. The key is
@@ -93,14 +101,21 @@ python mcp/tools/mcp_client.py \
   --limit 2
 ```
 
-The response contains an `evidence_id`. A second process can retrieve exactly the
-stored response without another provider request:
+The response contains an `evidence_id` and a `receipt`. Keep both outside the evidence
+directory. A second process can verify that receipt and retrieve the stored response
+without another provider request:
 
 ```bash
 python mcp/tools/mcp_client.py \
   --evidence-dir ./tmp/mcp-evidence \
-  --id EVIDENCE_ID
+  --id EVIDENCE_ID \
+  --receipt RECEIPT
 ```
+
+For compatibility, `get_evidence` also works without `receipt` and performs the
+previous payload hash and identity checks. Those checks detect corruption, but a
+coordinated replacement of payloads and manifest is detectable only when the original
+receipt is supplied.
 
 The independent verifier uses only the Python standard library:
 
@@ -124,14 +139,15 @@ Each search creates one directory named by its 32-character evidence ID:
 
 | File | Contents |
 | --- | --- |
-| `request.json` | supplied and effective query, limit, source experiment commit, installed Notanda version and server hash |
+| `request.json` | supplied and effective query, limit, MCP client name/version, source experiment commit, installed Notanda version and server hash |
 | `provider.json` | attempted OpenAlex URL after secret redaction, timestamps, HTTP status and captured parsed JSON |
-| `response.json` | the exact MCP result, including structured failures |
+| `response.json` | the persisted result, including structured failures and the untrusted-content notice; the detached receipt is added to the MCP response after sealing |
 | `manifest.json` | byte length and SHA-256 for the three payload files |
 
-The manifest detects accidental or one-file modification. It is not a digital
-signature and does not protect against coordinated replacement of payloads and
-manifest.
+The manifest alone detects corruption or one-file modification. It is not a digital
+signature and, without a caller-held receipt, does not detect coordinated replacement
+of payloads and manifest. Comparing the optional receipt anchors the exact manifest
+observed during the original search.
 
 ## Limits and failure behavior
 
@@ -141,12 +157,13 @@ manifest.
 - Only `https://api.openalex.org/works` is accepted as the provider endpoint.
 - Missing key: `configuration_error`; invalid input: `invalid_arguments`.
 - Provider/transport failure: `provider_error`; no provider exception text is stored.
-- Interrupted write: `incomplete`; hash or identity mismatch: `integrity_failure`.
+- Interrupted write: `incomplete`; hash or identity mismatch: `integrity_failure`;
+  supplied receipt mismatch: `receipt_mismatch`.
 - Provider text is persisted as untrusted data, never interpreted as instructions.
 
 ## Tests
 
-Install the development extra and run the original 20 deterministic checks:
+Install the development extra and run the 23 deterministic checks:
 
 ```bash
 python -m pip install -e "./mcp[dev]"

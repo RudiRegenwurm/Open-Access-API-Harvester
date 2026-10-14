@@ -10,7 +10,7 @@ Technical tests do not replace that external usability and installation check.
 
 This directory exposes Notanda's provenance-aware OpenAlex retrieval to local MCP
 clients. It is a separate `notanda-mcp` package, not a hosted service and not
-part of the `notanda` 1.3.1 package. It depends on that released core.
+part of the `notanda` 1.3.2 package. It depends on that released core.
 
 The component provides exactly two tools:
 
@@ -33,7 +33,8 @@ The implementation is adapted from the isolated branch `experiment/local-mcp`,
 commit `366bc2d4827aa915e2e58a82cd567163ed63d4be`. The sealed handoff package bound
 that source to 20 passing MCP tests and a successful live OpenAlex run. For the
 public repository integration, the duplicated Notanda runtime was replaced by the
-released `notanda==1.3.1` PyPI dependency; MCP remains pinned to the tested SDK
+released `notanda==1.3.1` PyPI dependency. Beta 3 updates that pin to
+`notanda==1.3.2`; MCP remains pinned to the tested SDK
 version `1.30.0`. [`SOURCE_PROVENANCE.json`](SOURCE_PROVENANCE.json) records the
 source hashes and the deliberate integration changes in machine-readable form.
 
@@ -44,17 +45,30 @@ verified** until that result is returned.
 
 ## Install the Beta package
 
-Use Python 3.11 or 3.12 in a virtual environment:
+Use Python 3.11 or 3.12. A dedicated virtual environment is recommended:
 
 ```bash
-python -m pip install "notanda-mcp==0.1.0b2"
+python -m venv .venv-mcp
+# Linux/macOS:
+. .venv-mcp/bin/activate
+# Windows PowerShell instead:
+# .venv-mcp\Scripts\Activate.ps1
+python -m pip install "notanda-mcp==0.1.0b3"
 ```
+
+Beta 3 requires exactly `notanda==1.3.2`. Installing it into an environment
+already containing that version preserves the core version. Beta 2 requires
+`notanda==1.3.1` and pip may downgrade an existing 1.3.2 installation to satisfy
+that pin. Use a separate environment if you need Beta 2 or a different Notanda
+core version; do not bypass dependency checks. The exact pin keeps the tested
+core/server combination reproducible; it does not promise compatibility with
+future core releases.
 
 For a client that uses uvx, configure this command and arguments (replace the
 evidence directory with a writable absolute path on your computer):
 
 ```text
-uvx --python 3.12 notanda-mcp@0.1.0b2 --evidence-dir ABSOLUTE_LOCAL_EVIDENCE_PATH
+uvx --python 3.12 notanda-mcp@0.1.0b3 --evidence-dir ABSOLUTE_LOCAL_EVIDENCE_PATH
 ```
 
 Set `HARVESTER_OPENALEX_API_KEY` in the MCP client's local environment. The key is
@@ -75,7 +89,7 @@ python -m pip install -e ./mcp
 ```
 
 This installs the MCP component from the checkout and resolves the reviewed Notanda
-core as `notanda==1.3.1` from PyPI.
+core as `notanda==1.3.2` from PyPI.
 
 Configure an OpenAlex API key locally. For example, in PowerShell without placing the
 key in terminal history:

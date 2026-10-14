@@ -1,0 +1,43 @@
+{
+  "mode": "mcp",
+  "at": "2026-10-14T05:43:23.347465+00:00",
+  "status": "PASS",
+  "core_version": "1.3.2",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "version": "0.1.0b3",
+  "sessions": [
+    {
+      "tool": "search_literature",
+      "credential_present": true,
+      "closed_before_next_session": true
+    },
+    {
+      "tool": "get_evidence",
+      "credential_present": false,
+      "closed_before_next_session": true
+    },
+    {
+      "tool": "get_evidence",
+      "credential_present": false,
+      "closed_before_next_session": true
+    }
+  ],
+  "evidence_id": "91576bc468aa4d5f84f7ea85d093c69a",
+  "receipt": "2624f29931feae918565466a63f462feab94d2aba20b8d930803dc5d3d7b9da1",
+  "results": 3,
+  "restart_equal": true,
+  "receipt_mismatch_detected": true,
+  "files_unchanged": true,
+  "provider_attempts": [
+    {
+      "body_bytes": 31228,
+      "finished_at": "2026-10-14T05:43:28Z",
+      "http_status": 200,
+      "method": "GET",
+      "started_at": "2026-10-14T05:43:27Z",
+      "url": "https://api.openalex.org/works?filter=has_doi%3Atrue%2Cis_oa%3Atrue&per-page=3&cursor=%2A&select=id%2Cdoi%2Ctitle%2Cdisplay_name%2Cpublication_year%2Cauthorships%2Cprimary_location%2Cbest_oa_location%2Clocations%2Copen_access%2Cabstract_inverted_index%2Cprimary_topic%2Ctopics%2Cids%2Ctype%2Clanguage%2Ccontent_urls&search=bibliometrics&api_key=REDACTED"
+    }
+  ],
+  "log_secret_scan_passed": true,
+  "file_secret_scan_passed": true
+}

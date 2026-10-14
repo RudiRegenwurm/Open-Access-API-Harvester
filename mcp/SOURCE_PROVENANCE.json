@@ -14,7 +14,7 @@
     "tools/verify_mcp_evidence.py": "e3cf002f5858adb878e3eff1055957f3284546c3739eecb4d918e8a0c5f91c4a"
   },
   "integration": {
-    "core_distribution": "notanda==1.3.1",
+    "core_distribution": "notanda==1.3.2",
     "mcp_sdk": "mcp==1.30.0",
     "layout": "separate repository package under mcp/",
     "changes": [
@@ -25,13 +25,22 @@
       "retained the two-tool scope while extending the evidence contract with caller-held manifest receipts",
       "constrained the published tool schema while retaining server-side argument validation",
       "recorded only the initialized MCP client name and version in each request",
-      "marked returned titles and metadata as unverified third-party content"
+      "marked returned titles and metadata as unverified third-party content",
+      "advanced the exact core pin to notanda==1.3.2 after Beta 3 installation, deterministic and live acceptance"
     ]
   },
   "acceptance": {
     "deterministic_mcp_tests": "23 passed",
     "full_product_regression": "732 passed, 1 skipped, 8 deselected",
     "standalone_install_against_pypi_notanda_1_3_1": "passed",
-    "external_unaccompanied_developer_test": "pending"
+    "external_unaccompanied_developer_test": "pending",
+    "beta_3_core_1_3_2": {
+      "report": "acceptance/0.1.0b3-2026-10-14.md",
+      "python": "3.12.14",
+      "mcp_tests": "23 passed",
+      "preinstalled_core_preserved": true,
+      "live_search_restart_receipt": "passed",
+      "independent_verifier": "passed"
+    }
   }
 }

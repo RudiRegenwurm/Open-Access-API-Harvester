@@ -3,7 +3,7 @@ name: Publish Notanda MCP Beta
 on:
   # Dedicated publication branch: no main merge or product release is required.
   push:
-    branches: [feature/mcp-registry-beta-20260925]
+    branches: [feature/mcp-registry-beta-20260925, fix/mcp-core-1.3.2-b3]
     paths: ["mcp/**", ".github/workflows/publish-mcp.yml"]
   workflow_dispatch:
 
@@ -30,7 +30,10 @@ jobs:
           python -m pip install build twine pytest jsonschema
           python -m build mcp
           python -m twine check --strict mcp/dist/*
+          # Regress the reported downgrade: install the released core first.
+          python -m pip install "notanda==1.3.2"
           python -m pip install mcp/dist/*.whl
+          python -c "from importlib.metadata import version; assert version('notanda') == '1.3.2'"
           python -m pip check
           python -m pytest mcp/tests -q
           notanda-mcp --help

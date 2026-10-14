@@ -54,7 +54,7 @@ def test_success_restart_and_corruption(tmp_path):
     assert request["source_experiment_commit"] == (
         "366bc2d4827aa915e2e58a82cd567163ed63d4be"
     )
-    assert request["notanda_core_version"] == "1.3.1"
+    assert request["notanda_core_version"] == "1.3.2"
     persisted = json.loads((folder / "response.json").read_bytes())
     assert "receipt" not in persisted
     assert EvidenceStore(tmp_path).get(result["evidence_id"]) == persisted

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "notanda-mcp"
-version = "0.1.0b2"
+version = "0.1.0b3"
 description = "Every OpenAlex search stores its request, response and checksums so sources can be checked later."
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
@@ -17,7 +17,7 @@ classifiers = [
     "Topic :: Scientific/Engineering",
 ]
 dependencies = [
-    "notanda==1.3.1",
+    "notanda==1.3.2",
     "mcp==1.30.0",
 ]
 

@@ -81,14 +81,14 @@ and persists the request, provider observation, exact returned result and SHA-25
 manifest under one stable evidence ID. It performs no full-text download or corpus
 write and opens no network server.
 
-The separate `notanda-mcp` Beta package uses the reviewed `notanda==1.3.1` PyPI
+The separate `notanda-mcp` Beta package uses the reviewed `notanda==1.3.2` PyPI
 release as its core. With Python 3.11 or 3.12, install it using
-`python -m pip install "notanda-mcp==0.1.0b2"`.
+`python -m pip install "notanda-mcp==0.1.0b3"`.
 The [MCP Registry entry](https://registry.modelcontextprotocol.io/?q=io.github.RudiRegenwurm%2Fnotanda)
 describes the package, local stdio transport, required OpenAlex API key and writable
 evidence directory. The package is not included in
 the `notanda` 1.3.2 distribution. The technical live search and restart/receipt
-checks passed on 2026-10-02; Thomas's external unaccompanied test is still pending. Client
+checks passed again on 2026-10-14 with core 1.3.2; Thomas's external unaccompanied test is still pending. Client
 configuration, evidence format and verification steps are in
 [`mcp/README.md`](mcp/README.md).
 
